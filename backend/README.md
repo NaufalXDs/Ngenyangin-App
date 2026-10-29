@@ -28,8 +28,32 @@
 ## Project setup
 
 ```bash
-$ npm install
+npm install
+cp .env.example .env
 ```
+
+## MySQL with Prisma 7
+
+Set `DATABASE_URL` in `.env` to a MySQL or MariaDB connection string, for example:
+
+```env
+DATABASE_URL="mysql://root:rootpassword@localhost:3306/ngenyangin_db"
+```
+
+From the repository root, start MariaDB with Docker Compose:
+
+```bash
+docker compose up -d mariadb
+```
+
+Then, from `backend/`, generate the Prisma Client and apply the schema during development:
+
+```bash
+npm run prisma:generate
+npm run prisma:push
+```
+
+Use `npm run prisma:migrate` when you want Prisma Migrate to create and track migration files instead. The NestJS service connects through Prisma's MariaDB driver adapter.
 
 ## Compile and run the project
 
