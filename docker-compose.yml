@@ -4,10 +4,12 @@ services:
     container_name: ngenyangin_mariadb
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MARIADB_DATABASE: ${MARIADB_DATABASE}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+      MARIADB_USER: ${MARIADB_USER}
     ports:
-      - "${DB_PORT:-3306}:3306"
+      - "${MARIADB_PORT:-3306}:3306"
     volumes:
       - mariadb_data:/var/lib/mysql
     healthcheck:
