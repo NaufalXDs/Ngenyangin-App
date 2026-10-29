@@ -23,6 +23,13 @@ Welcome to **Ngenyangin**, a web application for food and drink recipes featurin
 - Install dependencies: `npm install`
 - Run dev server: `npm run dev`
 
+## Git Commit Conventions (Mandatory)
+All git commit messages MUST strictly follow the Conventional Commits format:
+`<type>(<scope>): <description>`
+- **Types**: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`.
+- **Examples**: `feat(auth): add email password login`, `fix(recipe): restrict pending recipe view`.
+- **Rule**: Never use unclear, casual, or unprofessional commit messages. Keep descriptions concise and in standard technical English.
+
 ## Architecture & Workflow Rules
 1. **Authentication**: JWT-based authentication via `/auth/register` and `/auth/login`.
 2. **Roles**: 
