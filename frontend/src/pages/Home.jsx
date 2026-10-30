@@ -21,7 +21,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white shadow px-6 py-4 flex justify-between items-center">
+      <nav className="bg-black shadow px-6 py-4 flex justify-between items-center m-0">
         <h1 className="text-xl font-bold text-orange-600">🍲 Ngenyangin</h1>
         <div className="space-x-4">
           {user ? (
