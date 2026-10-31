@@ -1,37 +1,37 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext.jsx';
 
 export default function Home() {
-  const [user, setUser] = useState(null);
+  const { user, signOut } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-  }, []);
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    setUser(null);
+  const handleSignOut = () => {
+    signOut();
     navigate('/auth/login');
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <nav className="bg-black shadow px-6 py-4 flex justify-between items-center m-0">
+      <nav className="bg-white shadow px-6 py-4 flex justify-between items-center">
         <h1 className="text-xl font-bold text-orange-600">🍲 Ngenyangin</h1>
         <div className="space-x-4">
           {user ? (
             <div className="flex items-center space-x-3">
               <span className="text-sm font-medium text-gray-700">Halo, {user.name} ({user.role})</span>
+              {user.role === 'ADMIN' && (
+                <Link
+                  to="/admin"
+                  className="px-3 py-1.5 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition"
+                >
+                  Admin Dashboard
+                </Link>
+              )}
               <button
-                onClick={handleLogout}
+                onClick={handleSignOut}
                 className="px-4 py-2 bg-red-500 text-white rounded-lg text-sm hover:bg-red-600 transition"
               >
-                Logout
+                SignOut
               </button>
             </div>
           ) : (
@@ -40,13 +40,13 @@ export default function Home() {
                 to="/auth/login"
                 className="px-4 py-2 text-orange-600 border border-orange-600 rounded-lg text-sm font-medium hover:bg-orange-50 transition"
               >
-                Login
+                SignIn
               </Link>
               <Link
                 to="/auth/register"
                 className="px-4 py-2 bg-orange-600 text-white rounded-lg text-sm font-medium hover:bg-orange-700 transition"
               >
-                Register
+                SignUp
               </Link>
             </div>
           )}
