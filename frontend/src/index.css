@@ -1,16 +1,20 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 @theme {
-  --font-sans: 'DM Sans', sans-serif;
-  --font-serif: 'DM Serif Display', serif;
+  --color-text: #060605;
+  --color-background: #f6f4f3;
+  --color-primary: #f3c744;
+  --color-secondary: #32281f;
+  --color-accent: #f8f3e8;
 }
 
 :root {
   font-family: 'DM Sans', sans-serif;
   line-height: 1.5;
   font-weight: 400;
-  background-color: #f9fafb;
-  color: #1f2937;
+  background-color: var(--background);
+  color: var(--text);
 }
 
 body {
