@@ -1,21 +1,22 @@
-export default function Navbar() {
+import IconApp from "../assets/icons.png";
+import { Link } from "react-router-dom";
+
+export default function Navbar({ children }) {
   return (
     <header
       id="navbar"
-      className="bg-white shadow-sm shadow-gray-400/30 w-full max-w-full mt-1 mx-auto flex items-center p-2 backdrop-blur-md justify-between overflow-hidden"
+      className="mx-auto mt-1 flex w-full max-w-full flex-wrap items-center justify-between gap-2 bg-white p-2 shadow-sm shadow-gray-400/30 backdrop-blur-md"
     >
-      <a href="/">
+      <Link to="/" aria-label="Ngenyangin - beranda">
         <img
-          src="/icons.png"
-          alt=""
+          src={IconApp}
+          alt="Ngenyangin"
           width={151.45}
           height={52}
           className="max-w-full"
         />
-      </a>
-      <nav className="font-sans text-[15px] text-black flex space-x-5 list-none justify-between">
-        <li>{new Date().toLocaleDateString("id-ID")}</li>
-      </nav>
+      </Link>
+      <div>{children}</div>
     </header>
   );
 }
