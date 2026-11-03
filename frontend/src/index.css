@@ -23,3 +23,26 @@ body {
   min-height: 100vh;
   font-family: 'DM Sans', sans-serif;
 }
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f6f4f3;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #32281f;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #4a3c30;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #32281f #f6f4f3;
+}
