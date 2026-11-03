@@ -3,7 +3,10 @@ import { useNavigate, Link, useLocation } from "react-router-dom";
 import { FaArrowRight, FaEye, FaEyeSlash } from "react-icons/fa6";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { registerSchema } from "../../utils/validation.js";
-import OAuthButton from "../../components/OAuthButton.jsx";
+import OAuthButton from "../../components/auth/OAuthButton.jsx";
+import Button from "../../components/Button.jsx";
+import Form from "../../components/Form.jsx";
+import Alert from "../../components/Alert.jsx";
 
 export default function Register() {
   const [name, setName] = useState("");
@@ -96,101 +99,77 @@ export default function Register() {
                 Register
               </h2>
               {error && (
-                <div className="mb-4 rounded bg-red-100 p-3 text-sm text-red-700">
-                  {error}
-                </div>
+                <Alert type="error" message={error} className="mb-4" onClose={() => setError("")} />
               )}
               <form onSubmit={handleRegister} className="space-y-4">
-                <div>
-                  <label className="block text-[12px] font-bold font-sans text-[#31281F]">
-                    Name
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="mt-1 w-full border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    placeholder="Your name"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[12px] font-bold font-sans text-[#31281F]">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="mt-1 w-full border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    placeholder="nama@email.com"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[12px] font-bold font-sans text-[#31281F]">
-                    Create a Password
-                  </label>
-                  <div className="relative">
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      required
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="mt-1 w-full border border-gray-300 px-3 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                      placeholder="at least 8 characters"
-                    />
+                <Form
+                  label="Name"
+                  id="name"
+                  type="text"
+                  required
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Your name"
+                />
+                <Form
+                  label="Email"
+                  id="email"
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="nama@email.com"
+                />
+                <Form
+                  label="Create a Password"
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="at least 8 characters"
+                  rightElement={
                     <button
                       type="button"
                       onClick={() => setShowPassword((visible) => !visible)}
-                      aria-label={
-                        showPassword ? "Hide password" : "Show password"
-                      }
-                      className="absolute bottom-0 right-3 top-1 flex items-center text-gray-500 hover:text-gray-700"
+                      aria-label={showPassword ? "Hide password" : "Show password"}
+                      className="text-gray-500 hover:text-gray-700 p-1"
                     >
                       {showPassword ? <FaEyeSlash /> : <FaEye />}
                     </button>
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-[12px] font-bold font-sans text-[#31281F]">
-                    Confirm Password
-                  </label>
-                  <div className="relative">
-                    <input
-                      type={showConfirmPassword ? "text" : "password"}
-                      required
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="mt-1 w-full border border-gray-300 px-3 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                      placeholder="at least 8 characters"
-                    />
+                  }
+                />
+                <Form
+                  label="Confirm Password"
+                  id="confirmPassword"
+                  type={showConfirmPassword ? "text" : "password"}
+                  required
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="at least 8 characters"
+                  rightElement={
                     <button
                       type="button"
-                      onClick={() =>
-                        setShowConfirmPassword((visible) => !visible)
-                      }
-                      aria-label={
-                        showConfirmPassword
-                          ? "Hide confirm password"
-                          : "Show confirm password"
-                      }
-                      className="absolute bottom-0 right-3 top-1 flex items-center text-gray-500 hover:text-gray-700"
+                      onClick={() => setShowConfirmPassword((visible) => !visible)}
+                      aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
+                      className="text-gray-500 hover:text-gray-700 p-1"
                     >
                       {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
                     </button>
-                  </div>
-                </div>
-                <button
+                  }
+                />
+                <Button
                   type="submit"
-                  disabled={loading}
-                  className="h-12 w-full border border-[#31281F] bg-[#F3C743] text-[15px] font-semibold text-[#31281F] shadow-[4px_4px_0_#31281F] transition hover:bg-[#e8b92e] disabled:cursor-not-allowed disabled:opacity-70"
+                  variant="primary"
+                  size="lg"
+                  fullWidth={true}
+                  loading={loading}
                 >
                   <span className="inline-flex items-center justify-center gap-2">
-                    {loading ? "Memuat..." : "Sign Up Account"}
+                    Sign Up Account
                     <FaArrowRight />
                   </span>
-                </button>
+                </Button>
               </form>
             </div>
 
