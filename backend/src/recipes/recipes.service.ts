@@ -56,13 +56,17 @@ export class RecipesService {
     });
   }
 
-  async moderate(idStr: string, status: string, user: any) {
+  async moderate(idStr: string, status: string, rejectionReason: string | undefined, user: any) {
     if (user.role !== 'ADMIN' && user.role !== 'REVIEWER') {
       throw new ForbiddenException('Only admin and reviewers can moderate recipes');
     }
 
     if (!['APPROVED', 'REJECTED'].includes(status)) {
       throw new BadRequestException('Invalid moderation status. Must be APPROVED or REJECTED');
+    }
+
+    if (status === 'REJECTED' && (!rejectionReason || !rejectionReason.trim())) {
+      throw new BadRequestException('Rejection reason is required when rejecting a recipe');
     }
 
     const id = Number(idStr);
@@ -73,7 +77,10 @@ export class RecipesService {
 
     return this.prisma.recipe.update({
       where: { id },
-      data: { status: status as any },
+      data: {
+        status: status as any,
+        rejectionReason: status === 'REJECTED' && rejectionReason ? rejectionReason.trim() : null,
+      },
       include: { author: { select: { id: true, name: true, email: true } } },
     });
   }

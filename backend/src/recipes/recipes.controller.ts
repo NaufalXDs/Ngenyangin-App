@@ -34,8 +34,8 @@ export class RecipesController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('ADMIN', 'REVIEWER')
   @Patch(':id/moderate')
-  async moderate(@Param('id') id: string, @Body() body: { status: string }, @Req() req: any) {
-    return this.recipesService.moderate(id, body.status, req.user);
+  async moderate(@Param('id') id: string, @Body() body: { status: string; rejectionReason?: string }, @Req() req: any) {
+    return this.recipesService.moderate(id, body.status, body.rejectionReason, req.user);
   }
 
   @UseGuards(JwtAuthGuard)

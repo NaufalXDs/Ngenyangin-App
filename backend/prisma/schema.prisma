@@ -39,6 +39,7 @@ model Recipe {
   category     String
   imageUrl     String?
   status       Status   @default(PENDING)
+  rejectionReason String? @db.Text
   authorId     Int
   author       User     @relation(fields: [authorId], references: [id])
   createdAt    DateTime @default(now())
