@@ -63,4 +63,4 @@ All git commit messages MUST strictly follow the Conventional Commits format:
 ## Boundaries
 - Ask before: adding dependencies, changing `schema.prisma`, deleting files, changing role rules.
 - Never: commit `.env` or secrets, force-push, run `prisma migrate reset` on non-disposable data.
-- Before finishing a task: run lint, tests, and build for the touched app.
+- Before finishing a task: run lint, tests, and build for the touched app, and perform a security review on all newly added or modified endpoints (ensuring authentication guards, role validation, self-action prevention, and input sanitization are properly enforced).
