@@ -4,12 +4,12 @@ services:
     container_name: ngenyangin_mariadb
     restart: always
     environment:
-      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
-      MARIADB_DATABASE: ${MARIADB_DATABASE}
-      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
-      MARIADB_USER: ${MARIADB_USER}
+      MARIADB_ROOT_PASSWORD: ${DATABASE_ROOT_PASSWORD}
+      MARIADB_DATABASE: ${DATABASE_DATABASE}
+      MARIADB_PASSWORD: ${DATABASE_PASSWORD}
+      MARIADB_USER: ${DATABASE_USER}
     ports:
-      - "${MARIADB_PORT:-3306}:3306"
+      - "${DATABASE_PORT:-3306}:3306"
     volumes:
       - mariadb_data:/var/lib/mysql
     healthcheck:
@@ -19,13 +19,25 @@ services:
       retries: 5
       start_period: 30s
 
+  garage:
+    image: dxflrs/garage:99923a87182ae9252b421dda65c935b9c06b1444
+    container_name: ngenyangin_garage
+    env_file: .env
+    ports:
+      - "3900:3900"
+    volumes:
+      - ./garage.toml:/etc/garage.toml:ro
+      - garage_meta:/var/lib/garage/meta
+      - garage_data:/var/lib/garage/data
+    restart: unless-stopped
+
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     container_name: ngenyangin_phpmyadmin
     restart: always
     environment:
       PMA_HOST: mariadb
-      MYSQL_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DATABASE_ROOT_PASSWORD}
     ports:
       - "8080:80"
     depends_on:
@@ -33,3 +45,5 @@ services:
 
 volumes:
   mariadb_data:
+  garage_data:
+  garage_meta:
