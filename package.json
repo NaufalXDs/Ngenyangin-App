@@ -1,0 +1,20 @@
+{
+  "name": "ngenyangin-app",
+  "version": "1.0.0",
+  "description": "Ngenyangin recipe directory web application",
+  "private": true,
+  "scripts": {
+    "dev:backend": "npm --prefix backend run start:dev",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "build:backend": "npm --prefix backend run build",
+    "build:frontend": "npm --prefix frontend run build"
+  },
+  "keywords": [
+    "nestjs",
+    "react",
+    "prisma",
+    "mariadb"
+  ],
+  "author": "",
+  "license": "MIT"
+}
