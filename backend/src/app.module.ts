@@ -6,6 +6,7 @@ import { AppService } from './app.service.js';
 import { AuthModule } from './auth/auth.module.js';
 import { UsersModule } from './users/users.module.js';
 import { RecipesModule } from './recipes/recipes.module.js';
+import { AdminModule } from './admin/admin.module.js';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { RecipesModule } from './recipes/recipes.module.js';
     AuthModule,
     UsersModule,
     RecipesModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [
