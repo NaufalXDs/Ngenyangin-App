@@ -13,7 +13,10 @@
     "nestjs",
     "react",
     "prisma",
-    "mariadb"
+    "mariadb",
+    "recipe",
+    "food",
+    "drink"
   ],
   "author": "",
   "license": "MIT"
