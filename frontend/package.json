@@ -2,11 +2,6 @@
   "name": "frontend",
   "private": true,
   "description": "Frontend Ngenyangin",
-  "keywords": [
-    "recipe",
-    "food",
-    "drink"
-  ],
   "version": "0.0.0",
   "type": "module",
   "scripts": {
