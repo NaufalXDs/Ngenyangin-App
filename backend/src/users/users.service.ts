@@ -40,6 +40,53 @@ export class UsersService {
     };
   }
 
+  async updateProfile(userId: number, dto: { name?: string; email?: string; currentPassword?: string; newPassword?: string }) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const data: any = {};
+
+    if (dto.name && dto.name.trim()) {
+      data.name = dto.name.trim();
+    }
+
+    if (dto.email && dto.email.trim()) {
+      const emailClean = dto.email.trim().toLowerCase();
+      if (emailClean !== user.email) {
+        const existing = await this.prisma.user.findUnique({ where: { email: emailClean } });
+        if (existing) {
+          throw new ConflictException('Email is already registered');
+        }
+        data.email = emailClean;
+      }
+    }
+
+    if (dto.newPassword) {
+      if (!dto.currentPassword) {
+        throw new BadRequestException('Current password is required to change password');
+      }
+      const isMatch = await bcrypt.compare(dto.currentPassword, user.password);
+      if (!isMatch) {
+        throw new BadRequestException('Current password is incorrect');
+      }
+      data.password = await bcrypt.hash(dto.newPassword, 10);
+    }
+
+    if (Object.keys(data).length === 0) {
+      return { id: user.id, name: user.name, email: user.email, role: user.role };
+    }
+
+    const updated = await this.prisma.user.update({
+      where: { id: userId },
+      data,
+      select: { id: true, name: true, email: true, role: true },
+    });
+
+    return updated;
+  }
+
   async updateRole(idStr: string, role: string) {
     if (!['USER', 'REVIEWER', 'ADMIN'].includes(role)) {
       throw new BadRequestException('Invalid role specified');

@@ -33,6 +33,16 @@ export class RecipesService {
     });
   }
 
+  async findMine(userId: number) {
+    return this.prisma.recipe.findMany({
+      where: { authorId: userId },
+      include: {
+        author: { select: { id: true, name: true, email: true } },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
   async create(dto: { title: string; description?: string; ingredients: string; instructions: string; category?: string }, user: any) {
     if (!dto.title || !dto.ingredients || !dto.instructions) {
       throw new BadRequestException('Title, ingredients, and instructions are required');

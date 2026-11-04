@@ -26,6 +26,12 @@ export class RecipesController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get('mine')
+  async findMine(@Req() req: any) {
+    return this.recipesService.findMine(Number(req.user.id));
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Post()
   async create(@Body() body: { title: string; description: string; ingredients: string; instructions: string }, @Req() req: any) {
     return this.recipesService.create(body, req.user);
