@@ -42,7 +42,8 @@ All git commit messages MUST strictly follow the Conventional Commits format:
 - **Types**: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`.
 - **Examples**: `feat(auth): add email password login`, `fix(recipe): restrict pending recipe view`.
 - **Rule**: Never use unclear, casual, or unprofessional commit messages. Keep descriptions concise and in standard technical English.
-- **Workflow Rule**: The agent must NOT run `git commit` or `git push` directly. Instead, the agent provides the exact files to add and the suggested Conventional Commit message for the user to review and execute themselves.
+- **Workflow Rule**: The agent must NOT run `git commit` or `git push` directly. Instead, after any approved change or feature completion, the agent provides the exact files to add and the suggested Conventional Commit message for the user to review and execute themselves.
+- **Brainstorming Rule**: Whenever brainstorming is invoked (`superpowers:brainstorming`), the agent must NOT implement directly. The agent must lay out approaches, create a design doc, and get explicit user approval before writing code, scaffolding, or installing dependencies.
 
 ## Architecture & Workflow Rules
 1. **Authentication**: JWT-based authentication via `/auth/register` and `/auth/login`.
