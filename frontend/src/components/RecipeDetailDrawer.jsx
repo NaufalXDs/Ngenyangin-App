@@ -81,7 +81,7 @@ export default function RecipeDetailDrawer({ isOpen, onClose, recipe }) {
               <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
                 <FaUtensils className="text-primary" size={12} /> Ingredients
               </h3>
-              <div className="bg-muted/40 p-4 rounded-xl text-sm text-foreground/90 whitespace-pre-line border border-border font-mono text-xs">
+              <div className="bg-muted/40 p-4 rounded-xl text-foreground/90 whitespace-pre-line border border-border font-mono text-xs">
                 {recipe.ingredients}
               </div>
             </div>
@@ -91,7 +91,7 @@ export default function RecipeDetailDrawer({ isOpen, onClose, recipe }) {
               <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
                 <FaListCheck className="text-primary" size={12} /> Cooking Instructions
               </h3>
-              <div className="bg-muted/40 p-4 rounded-xl text-sm text-foreground/90 whitespace-pre-line border border-border text-xs leading-relaxed">
+              <div className="bg-muted/40 p-4 rounded-xl text-foreground/90 whitespace-pre-line border border-border text-xs leading-relaxed">
                 {recipe.instructions}
               </div>
             </div>
