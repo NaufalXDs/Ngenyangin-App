@@ -14,18 +14,20 @@ export default function Button({
   ...props
 }) {
   const baseStyles =
-    "inline-flex items-center justify-center font-semibold transition border border-[#31281F] shadow-[4px_4px_0_#31281F] active:translate-x-1 active:translate-y-1 active:shadow-[2px_2px_0_#31281F] disabled:cursor-not-allowed disabled:opacity-70 disabled:active:translate-x-0 disabled:active:translate-y-0 disabled:active:shadow-[4px_4px_0_#31281F]";
+    "inline-flex items-center justify-center font-medium transition-all duration-200 ease-in-out rounded-[10px] border border-border shadow-xs active:scale-[0.98] disabled:cursor-not-allowed cursor-pointer disabled:opacity-50";
 
   const variants = {
-    primary: "bg-[#F3C743] text-[#31281F] hover:bg-[#e8b92e]",
-    secondary: "bg-[#31281F] text-white hover:bg-[#463a2d]",
-    outline: "bg-white text-[#31281F] hover:bg-gray-50",
+    primary: "bg-primary text-primary-foreground hover:opacity-90 hover:scale-[1.02] shadow-sm",
+    secondary: "bg-secondary text-secondary-foreground hover:bg-primary hover:text-primary-foreground hover:scale-[1.02]",
+    outline: "bg-background text-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary hover:scale-[1.02]",
+    destructive: "bg-destructive text-background hover:bg-destructive/80 hover:text-foreground hover:scale-[1.02]",
+    ghost: "border-transparent bg-transparent text-foreground hover:bg-primary hover:text-primary-foreground hover:scale-[1.02]",
   };
 
   const sizes = {
-    sm: "px-3 py-1.5 text-xs",
+    sm: "px-3 py-1 text-xs",
     md: "px-4 py-2 text-sm",
-    lg: "h-12 px-6 text-[15px]",
+    lg: "px-6 py-3 text-base",
   };
 
   const combinedClasses = `${baseStyles} ${variants[variant] || variants.primary} ${sizes[size] || sizes.md} ${fullWidth ? "w-full" : ""} ${className}`;

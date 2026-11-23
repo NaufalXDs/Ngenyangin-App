@@ -34,7 +34,7 @@ export default function Home() {
       <main className="max-w-5xl mx-auto px-6 py-12 space-y-10">
         {/* Hero Section */}
         <div className="text-center">
-          <h2 className="font-serif text-4xl sm:text-5xl font-bold text-[#31281F] mb-4">
+          <h2 className="text-4xl sm:text-5xl font-bold text-[#31281F] mb-4">
             Temukan & Bagikan Resep Makanan Favoritmu
           </h2>
           <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
@@ -45,6 +45,7 @@ export default function Home() {
           <div className="flex flex-wrap items-center justify-center gap-4">
             <Button
               variant="primary"
+              className="hover:bg-primary"
               size="lg"
               onClick={() => navigate("/recipes")}
             >
@@ -107,7 +108,7 @@ export default function Home() {
 
           {/* RecipeCard Component Test */}
           <div>
-            <h3 className="font-serif text-xl font-bold text-[#31281F] mb-4">
+            <h3 className="text-xl font-bold text-[#31281F] mb-4">
               Contoh RecipeCard
             </h3>
             <RecipeCard recipe={sampleRecipe} />

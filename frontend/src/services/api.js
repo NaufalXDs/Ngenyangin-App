@@ -40,5 +40,6 @@ export const getAdminUsers = () => apiRequest('/admin/users');
 export const updateUserRole = (id, role) => apiRequest(`/admin/users/${id}/role`, { method: 'PATCH', body: JSON.stringify({ role }) });
 export const deleteUser = (id) => apiRequest(`/admin/users/${id}`, { method: 'DELETE' });
 export const getAdminRecipes = () => apiRequest('/recipes?status=ALL');
+export const getPendingRecipes = () => apiRequest('/recipes?status=PENDING');
 export const adminDeleteRecipe = (id) => apiRequest(`/recipes/${id}`, { method: 'DELETE' });
 export const adminModerateRecipe = (id, data) => apiRequest(`/recipes/${id}/moderate`, { method: 'PATCH', body: JSON.stringify(data) });

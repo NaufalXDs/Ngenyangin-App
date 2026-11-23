@@ -33,7 +33,7 @@ export default function RecipeCard({ recipe }) {
       
       <div>
         <Link to={`/recipes/${slug}`}>
-          <h4 className="font-serif text-lg font-bold text-[#31281F] line-clamp-1 hover:text-orange-600 transition">
+          <h4 className="text-lg font-bold text-[#31281F] line-clamp-1 hover:text-orange-600 transition">
             {title}
           </h4>
         </Link>

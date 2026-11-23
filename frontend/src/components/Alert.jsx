@@ -36,7 +36,7 @@ export default function Alert({
           type="button"
           onClick={onClose}
           aria-label="Close alert"
-          className="rounded-lg p-1 hover:bg-black/5 transition"
+          className="rounded-lg p-1 hover:bg-black/5 transition cursor-pointer"
         >
           <FaXmark size={16} />
         </button>

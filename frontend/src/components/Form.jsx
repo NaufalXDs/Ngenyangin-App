@@ -16,7 +16,7 @@ export default function Form({
       {label && (
         <label
           htmlFor={id}
-          className="block text-[12px] font-bold font-sans text-[#31281F]"
+          className="block text-xs font-semibold text-foreground"
         >
           {label}
         </label>
@@ -29,8 +29,8 @@ export default function Form({
           onChange={onChange}
           placeholder={placeholder}
           required={required}
-          className={`w-full border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 ${
-            error ? "border-red-500 bg-red-50/30" : "border-gray-300 bg-white"
+          className={`w-full rounded-md border border-input px-3 py-2 text-sm bg-background shadow-xs focus:outline-none focus:ring-2 focus:ring-primary transition ${
+            error ? "border-destructive bg-destructive/10" : ""
           } ${rightElement ? "pr-10" : ""}`}
           {...props}
         />
@@ -40,7 +40,7 @@ export default function Form({
           </div>
         )}
       </div>
-      {error && <p className="text-xs text-red-600 mt-1">{error}</p>}
+      {error && <p className="text-xs text-destructive mt-1">{error}</p>}
     </div>
   );
 }

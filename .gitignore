@@ -153,3 +153,6 @@ vite.config.ts.timestamp-*
 
 .hermes
 .superpowers.env
+.superpowers
+design
+docs

@@ -1,4 +1,6 @@
 import { Controller, Get, Post, Patch, Delete, Body, Param, Query, Req, UseGuards } from '@nestjs/common';
+import { SkipThrottle } from '@nestjs/throttler';
+import jwt from 'jsonwebtoken';
 import { RecipesService } from './recipes.service.js';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
 import { RolesGuard } from '../auth/roles.guard.js';
@@ -8,6 +10,7 @@ import { Roles } from '../auth/roles.decorator.js';
 export class RecipesController {
   constructor(private recipesService: RecipesService) {}
 
+  @SkipThrottle()
   @Get()
   async findAll(@Query('status') status: string, @Req() req: any) {
     // Optional bearer token extraction for reviewer/admin filtered queries
@@ -16,7 +19,6 @@ export class RecipesController {
     if (authHeader) {
       try {
         const token = authHeader.split(' ')[1];
-        const jwt = await import('jsonwebtoken');
         user = jwt.verify(token, process.env.JWT_SECRET || 'ngenyangin_secret_key');
       } catch (e) {
         // invalid token ignored for public get

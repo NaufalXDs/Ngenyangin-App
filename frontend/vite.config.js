@@ -5,6 +5,7 @@ import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
+  publicDir: false,
   server: {
     port: process.env.VITE_PORT ? Number(process.env.VITE_PORT) : 5173,
   },

@@ -1,5 +1,6 @@
 import React from "react";
 import { FaApple, FaGoogle } from "react-icons/fa";
+import Button from "../Button";
 
 export default function OAuthButton() {
   return (
@@ -7,22 +8,26 @@ export default function OAuthButton() {
       id="oauth"
       className="mt-6 flex w-full max-w-md flex-col items-center justify-center gap-y-5"
     >
-      <p className="font-sans text-[11px] text-[#6C6257]">Or</p>
+      <p className="font-black text-muted-foreground mb-5">Or</p>
       <div className="flex w-full flex-col justify-center gap-4 sm:flex-row">
-        <a
+        <Button
+          variant="outline"
+          size="md"
           href="/auth/google"
-          className="flex h-11 w-full items-center justify-center gap-3 border-2 border-[#DED5C3] bg-white sm:w-52"
+          className="flex h-11 w-full items-center justify-center gap-3"
         >
           <FaGoogle />
           Google
-        </a>
-        <a
+        </Button>
+        <Button
+          variant="outline"
           href="/auth/apple"
-          className="flex h-11 w-full items-center justify-center gap-3 border-2 border-[#DED5C3] bg-white sm:w-52"
+          size="md"
+          className="flex h-11 w-full items-center justify-center gap-3"
         >
           <FaApple />
           Apple
-        </a>
+        </Button>
       </div>
     </div>
   );

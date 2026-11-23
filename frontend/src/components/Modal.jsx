@@ -11,28 +11,28 @@ export default function Modal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs animate-fadeIn">
-      <div className="relative w-full max-w-lg rounded-xl bg-white border border-[#31281F] shadow-[6px_6px_0_#31281F] overflow-hidden">
+      <div className="relative w-full max-w-lg rounded-2xl bg-card border border-border shadow-lg overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4 bg-orange-50">
-          <h3 className="font-serif text-xl font-bold text-[#31281F]">{title}</h3>
+        <div className="flex items-center justify-between border-b border-border px-6 py-4 bg-muted/40">
+          <h3 className="text-lg font-bold text-foreground">{title}</h3>
           <button
             type="button"
             onClick={onClose}
             aria-label="Close modal"
-            className="rounded-lg p-1 text-gray-500 hover:bg-gray-200 hover:text-gray-800 transition"
+            className="rounded-lg p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground transition cursor-pointer"
           >
-            <FaXmark size={20} />
+            <FaXmark size={18} />
           </button>
         </div>
 
         {/* Body */}
-        <div className="px-6 py-4 max-h-[70vh] overflow-y-auto text-gray-700">
+        <div className="px-6 py-5 max-h-[70vh] overflow-y-auto text-foreground">
           {children}
         </div>
 
         {/* Footer */}
         {footer && (
-          <div className="flex items-center justify-end gap-3 border-t border-gray-200 px-6 py-3 bg-gray-50">
+          <div className="flex items-center justify-end gap-3 border-t border-border px-6 py-4 bg-muted/20">
             {footer}
           </div>
         )}

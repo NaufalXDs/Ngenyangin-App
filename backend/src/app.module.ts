@@ -13,7 +13,7 @@ import { AdminModule } from './admin/admin.module.js';
     ThrottlerModule.forRoot([
       {
         ttl: 60000,
-        limit: 20,
+        limit: 100,
       },
     ]),
     AuthModule,
