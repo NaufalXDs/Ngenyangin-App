@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from "react";
-import Card from "../../components/Card.jsx";
 import Button from "../../components/Button.jsx";
-import WorkspaceLayout from "../../layouts/WorkspaceLayout.jsx";
-import { getAdminRecipes, adminDeleteRecipe } from "../../services/api.js";
+import { getAdminRecipes, adminDeleteRecipe, moderateRecipe } from "../../services/api.js";
 import Alert from "../../components/Alert.jsx";
 import Modal from "../../components/Modal.jsx";
+import RecipeDetailDrawer from "../../components/RecipeDetailDrawer.jsx";
 import {
   FaBookBookmark,
   FaMagnifyingGlass,
   FaTrashCan,
-  FaUser,
-  FaClock,
+  FaEye,
 } from "react-icons/fa6";
 
 export default function RecipeManagement() {
@@ -23,6 +21,8 @@ export default function RecipeManagement() {
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedRecipeId, setSelectedRecipeId] = useState(null);
+  const [selectedRecipe, setSelectedRecipe] = useState(null);
+  const [isDetailDrawerOpen, setIsDetailDrawerOpen] = useState(false);
 
   useEffect(() => {
     fetchRecipes();
@@ -38,6 +38,21 @@ export default function RecipeManagement() {
       setError(err.message || "Failed to load recipes");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleStatusChange = async (recipeId, newStatus) => {
+    try {
+      setError("");
+      await moderateRecipe(recipeId, {
+        status: newStatus,
+        rejectionReason:
+          newStatus === "REJECTED" ? "Updated by administrator" : undefined,
+      });
+      setSuccess("Recipe status updated successfully");
+      fetchRecipes();
+    } catch (err) {
+      setError(err.message || "Failed to update recipe status");
     }
   };
 
@@ -76,26 +91,33 @@ export default function RecipeManagement() {
 
   return (
     <>
-      {error && (
-        <Alert type="error" message={error} onClose={() => setError("")} />
-      )}
-      {success && (
-        <Alert
-          type="success"
-          message={success}
-          onClose={() => setSuccess("")}
-        />
-      )}
+      <div className="my-6">
+        {error && (
+          <Alert type="error" message={error} onClose={() => setError("")} />
+        )}
+        {success && (
+          <Alert
+            type="success"
+            message={success}
+            onClose={() => setSuccess("")}
+          />
+        )}
+      </div>
 
       <div className="space-y-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div>
-            <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
-              <FaBookBookmark className="text-primary" /> Recipe Management
-            </h2>
-            <p className="text-sm text-muted-foreground mt-1">
-              Oversee, review, and manage all recipes in the system.
-            </p>
+          <div className="flex items-center gap-3">
+            <div className="p-3 bg-primary text-primary-foreground rounded-xl shadow-xs">
+              <FaBookBookmark size={24} />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-foreground">
+                Recipe Management
+              </h1>
+              <p className="text-sm text-muted-foreground">
+                Oversee, review, and manage all recipes in the system.
+              </p>
+            </div>
           </div>
 
           <div className="relative w-full md:w-80">
@@ -138,7 +160,7 @@ export default function RecipeManagement() {
           })}
         </div>
 
-        {/* Recipe Grid */}
+        {/* Recipe Table View */}
         {loading ? (
           <p className="text-muted-foreground py-12 text-center">
             Loading recipes...
@@ -153,76 +175,104 @@ export default function RecipeManagement() {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredRecipes.map((recipe) => (
-              <Card
-                key={recipe.id}
-                title={recipe.title}
-                subtitle={
-                  <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                    <FaUser size={11} />{" "}
-                    {recipe.author?.name || "Unknown Author"}
-                  </span>
-                }
-              >
-                <div className="space-y-4 pt-2">
-                  <div className="flex items-center justify-between">
-                    <span
-                      className={`px-2.5 py-1 rounded-[8px] text-[11px] font-bold tracking-wide uppercase ${
-                        recipe.status === "APPROVED"
-                          ? "bg-emerald-100 text-emerald-800"
-                          : recipe.status === "REJECTED"
-                            ? "bg-rose-100 text-rose-800"
-                            : "bg-amber-100 text-amber-800"
-                      }`}
+          <div className="bg-card rounded-[10px] border border-border shadow-sm overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm">
+                <thead className="bg-muted/50 border-b border-border text-foreground font-semibold">
+                  <tr>
+                    <th className="px-6 py-3.5">Recipe</th>
+                    <th className="px-6 py-3.5">Author</th>
+                    <th className="px-6 py-3.5">Status</th>
+                    <th className="px-6 py-3.5">Submitted Date</th>
+                    <th className="px-6 py-3.5 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {filteredRecipes.map((recipe) => (
+                    <tr
+                      key={recipe.id}
+                      className="hover:bg-muted/35 transition-colors"
                     >
-                      {recipe.status}
-                    </span>
-                    <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                      <FaClock size={11} />
-                      {new Date(recipe.createdAt).toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
-                      })}
-                    </span>
-                  </div>
-
-                  <div className="bg-muted/40 p-3 rounded-[8px] text-xs text-foreground/80 space-y-1.5 border border-border/50">
-                    <p className="line-clamp-2">
-                      <strong className="text-foreground">Category:</strong>{" "}
-                      {recipe.category || "Main Course"}
-                    </p>
-                    <p className="line-clamp-2">
-                      <strong className="text-foreground">Ingredients:</strong>{" "}
-                      {recipe.ingredients}
-                    </p>
-                  </div>
-
-                  {recipe.status === "REJECTED" && recipe.rejectionReason && (
-                    <div className="bg-rose-50 border border-rose-200 p-2.5 rounded-[8px] text-xs text-rose-800">
-                      <strong>Rejection Reason:</strong>{" "}
-                      {recipe.rejectionReason}
-                    </div>
-                  )}
-
-                  <div className="flex items-center justify-end gap-2 pt-3 border-t border-border">
-                    <Button
-                      variant="destructive"
-                      size="md"
-                      onClick={() => {
-                        setSelectedRecipeId(recipe.id);
-                        setIsDeleteModalOpen(true);
-                      }}
-                      className="inline-flex items-center gap-1.5 text-sm"
-                    >
-                      <FaTrashCan size={14} />
-                      <span>Delete Recipe</span>
-                    </Button>
-                  </div>
-                </div>
-              </Card>
-            ))}
+                      <td className="px-6 py-4">
+                        <div className="min-w-0 space-y-1">
+                          <p className="font-semibold text-foreground truncate">
+                            {recipe.title}
+                          </p>
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-primary/10 text-primary">
+                            {recipe.category || "Main Course"}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="min-w-0">
+                          <p className="font-medium text-foreground text-xs">
+                            {recipe.author?.name || "Unknown"}
+                          </p>
+                          <p className="text-xs text-muted-foreground truncate">
+                            {recipe.author?.email}
+                          </p>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <select
+                          value={recipe.status}
+                          onChange={(e) =>
+                            handleStatusChange(recipe.id, e.target.value)
+                          }
+                          className={`border rounded-lg px-2.5 py-1.5 text-xs font-bold tracking-wide uppercase focus:outline-none focus:ring-2 focus:ring-primary shadow-xs cursor-pointer ${
+                            recipe.status === "APPROVED"
+                              ? "bg-emerald-100 text-emerald-800 border-emerald-300"
+                              : recipe.status === "REJECTED"
+                                ? "bg-rose-100 text-rose-800 border-rose-300"
+                                : "bg-amber-100 text-amber-800 border-amber-300"
+                          }`}
+                        >
+                          <option value="APPROVED">APPROVED</option>
+                          <option value="PENDING">PENDING</option>
+                          <option value="REJECTED">REJECTED</option>
+                        </select>
+                      </td>
+                      <td className="px-6 py-4 text-muted-foreground text-xs font-medium">
+                        {new Date(recipe.createdAt).toLocaleDateString(
+                          "en-US",
+                          {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                          }
+                        )}
+                      </td>
+                      <td className="px-6 py-4 text-right space-x-2">
+                        <Button
+                          variant="outline"
+                          size="md"
+                          onClick={() => {
+                            setSelectedRecipe(recipe);
+                            setIsDetailDrawerOpen(true);
+                          }}
+                          className="inline-flex items-center gap-1.5 text-sm"
+                        >
+                          <FaEye size={14} />
+                          <span>View Details</span>
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          size="md"
+                          onClick={() => {
+                            setSelectedRecipeId(recipe.id);
+                            setIsDeleteModalOpen(true);
+                          }}
+                          className="inline-flex items-center gap-1.5 text-sm"
+                        >
+                          <FaTrashCan size={14} />
+                          <span>Delete</span>
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </div>
@@ -235,14 +285,14 @@ export default function RecipeManagement() {
           <>
             <Button
               variant="outline"
-              size="sm"
+              size="md"
               onClick={() => setIsDeleteModalOpen(false)}
             >
               Cancel
             </Button>
             <Button
               variant="destructive"
-              size="sm"
+              size="md"
               onClick={handleDeleteRecipe}
             >
               Delete Recipe
@@ -255,6 +305,12 @@ export default function RecipeManagement() {
           action cannot be undone.
         </p>
       </Modal>
+
+      <RecipeDetailDrawer
+        isOpen={isDetailDrawerOpen}
+        onClose={() => setIsDetailDrawerOpen(false)}
+        recipe={selectedRecipe}
+      />
     </>
   );
 }

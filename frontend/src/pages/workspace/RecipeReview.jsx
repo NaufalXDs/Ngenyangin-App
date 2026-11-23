@@ -5,13 +5,19 @@ import { getPendingRecipes, moderateRecipe } from "../../services/api.js";
 import Alert from "../../components/Alert.jsx";
 import Modal from "../../components/Modal.jsx";
 import Form from "../../components/Form.jsx";
-import { FaClipboardList, FaCheck, FaXmark } from "react-icons/fa6";
+import {
+  FaClipboardList,
+  FaCheck,
+  FaXmark,
+  FaMagnifyingGlass,
+} from "react-icons/fa6";
 
 export default function RecipeReview() {
   const [pendingRecipes, setPendingRecipes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const [selectedRecipeId, setSelectedRecipeId] = useState(null);
@@ -38,7 +44,9 @@ export default function RecipeReview() {
     try {
       setError("");
       await moderateRecipe(id, { status, rejectionReason: reason });
-      setSuccess(`Recipe successfully ${status === "APPROVED" ? "approved" : "rejected"}`);
+      setSuccess(
+        `Recipe successfully ${status === "APPROVED" ? "approved" : "rejected"}`,
+      );
       setIsRejectModalOpen(false);
       setRejectionReason("");
       fetchPendingRecipes();
@@ -47,31 +55,94 @@ export default function RecipeReview() {
     }
   };
 
+  const filteredRecipes = pendingRecipes.filter((recipe) => {
+    const q = searchQuery.toLowerCase();
+    return (
+      (recipe.title && recipe.title.toLowerCase().includes(q)) ||
+      (recipe.author?.name && recipe.author.name.toLowerCase().includes(q)) ||
+      (recipe.category && recipe.category.toLowerCase().includes(q))
+    );
+  });
+
   return (
     <div className="space-y-6">
-      {error && <Alert type="error" message={error} onClose={() => setError("")} />}
-      {success && <Alert type="success" message={success} onClose={() => setSuccess("")} />}
+      {error && (
+        <Alert type="error" message={error} onClose={() => setError("")} />
+      )}
+      {success && (
+        <Alert
+          type="success"
+          message={success}
+          onClose={() => setSuccess("")}
+        />
+      )}
 
-      <div className="flex items-center gap-2">
-        <FaClipboardList className="text-primary" size={22} />
-        <h2 className="text-2xl font-bold text-foreground">Recipe Review Queue</h2>
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="p-3 bg-primary text-primary-foreground rounded-xl shadow-xs">
+            <FaClipboardList size={24} />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-foreground">
+              Recipe Review Queue
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              Manage recipes waiting for moderation
+            </p>
+          </div>
+        </div>
+
+        <div className="relative w-full md:w-80">
+          <FaMagnifyingGlass
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+            size={14}
+          />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search pending recipes by title or author..."
+            className="w-full rounded-[10px] border border-border bg-card pl-9 pr-4 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary shadow-xs"
+          />
+        </div>
       </div>
 
       {loading ? (
-        <p className="text-muted-foreground py-12 text-center">Loading review queue...</p>
-      ) : pendingRecipes.length === 0 ? (
+        <p className="text-muted-foreground py-12 text-center">
+          Loading review queue...
+        </p>
+      ) : filteredRecipes.length === 0 ? (
         <Card>
-          <p className="text-center text-muted-foreground py-8">No recipes waiting for review at the moment.</p>
+          <div className="text-center py-12 space-y-2">
+            <p className="text-base font-medium text-foreground">
+              No pending recipes found matching your search.
+            </p>
+            <p className="text-xs text-muted-foreground">
+              All caught up or try adjusting your search query.
+            </p>
+          </div>
         </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {pendingRecipes.map((recipe) => (
-            <Card key={recipe.id} title={recipe.title} subtitle={`By: ${recipe.author?.name} (${recipe.author?.email})`}>
+          {filteredRecipes.map((recipe) => (
+            <Card
+              key={recipe.id}
+              title={recipe.title}
+              subtitle={`By: ${recipe.author?.name} (${recipe.author?.email})`}
+            >
               <div className="space-y-3">
-                <p className="text-xs font-semibold text-muted-foreground">Category: {recipe.category}</p>
+                <p className="text-xs font-semibold text-muted-foreground">
+                  Category: {recipe.category}
+                </p>
                 <div className="bg-muted/40 p-3 rounded-[8px] text-xs text-foreground/80 space-y-1 border border-border">
-                  <p><strong>Ingredients:</strong> {recipe.ingredients.substring(0, 100)}...</p>
-                  <p><strong>Instructions:</strong> {recipe.instructions.substring(0, 100)}...</p>
+                  <p>
+                    <strong>Ingredients:</strong>{" "}
+                    {recipe.ingredients.substring(0, 100)}...
+                  </p>
+                  <p>
+                    <strong>Instructions:</strong>{" "}
+                    {recipe.instructions.substring(0, 100)}...
+                  </p>
                 </div>
                 <div className="flex items-center justify-end gap-2 pt-3 border-t border-border">
                   <Button
@@ -106,13 +177,19 @@ export default function RecipeReview() {
         title="Rejection Reason"
         footer={
           <>
-            <Button variant="outline" size="md" onClick={() => setIsRejectModalOpen(false)}>
+            <Button
+              variant="outline"
+              size="md"
+              onClick={() => setIsRejectModalOpen(false)}
+            >
               Cancel
             </Button>
             <Button
               variant="destructive"
               size="md"
-              onClick={() => handleModerate(selectedRecipeId, "REJECTED", rejectionReason)}
+              onClick={() =>
+                handleModerate(selectedRecipeId, "REJECTED", rejectionReason)
+              }
             >
               Submit Rejection
             </Button>
@@ -121,7 +198,8 @@ export default function RecipeReview() {
       >
         <div className="space-y-4">
           <p className="text-xs text-muted-foreground">
-            Provide a rejection reason so the recipe author can improve and resubmit.
+            Provide a rejection reason so the recipe author can improve and
+            resubmit.
           </p>
           <Form
             label="Reason"

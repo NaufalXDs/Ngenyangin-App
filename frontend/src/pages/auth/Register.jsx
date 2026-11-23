@@ -4,15 +4,18 @@ import { FaArrowRight, FaEye, FaEyeSlash } from "react-icons/fa";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { registerSchema } from "../../utils/validation.js";
 import OAuthButton from "../../components/auth/OAuthButton.jsx";
+import TurnstileWidget from "../../components/auth/TurnstileWidget.jsx";
 import Button from "../../components/Button.jsx";
 import Form from "../../components/Form.jsx";
 import Alert from "../../components/Alert.jsx";
 
 export default function Register() {
   const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState("");
@@ -30,16 +33,17 @@ export default function Register() {
       return;
     }
 
-    const validationResult = registerSchema.safeParse({ name, email, password });
+    const validationResult = registerSchema.safeParse({ name, username, email, password });
     if (!validationResult.success) {
-      setError(validationResult.error.errors[0].message);
+      const issues = validationResult.error?.errors || validationResult.error?.issues || [];
+      setError(issues[0]?.message || "Validation failed");
       return;
     }
 
     setLoading(true);
 
     try {
-      await signUp({ name, email, password });
+      await signUp({ name, username, email, password, turnstileToken });
       navigate("/");
     } catch (err) {
       setError(err.message);
@@ -89,7 +93,16 @@ export default function Register() {
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Your name"
+              placeholder="Your display name"
+            />
+            <Form
+              label="Username"
+              id="username"
+              type="text"
+              required
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="unique_username"
             />
             <Form
               label="Email"
@@ -138,6 +151,9 @@ export default function Register() {
                 </button>
               }
             />
+
+            <TurnstileWidget onVerify={(token) => setTurnstileToken(token)} />
+
             <Button
               type="submit"
               variant="primary"

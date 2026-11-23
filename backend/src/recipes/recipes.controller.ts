@@ -30,7 +30,7 @@ export class RecipesController {
   @UseGuards(JwtAuthGuard)
   @Get('mine')
   async findMine(@Req() req: any) {
-    return this.recipesService.findMine(Number(req.user.id));
+    return this.recipesService.findMine(req.user.id);
   }
 
   @UseGuards(JwtAuthGuard)

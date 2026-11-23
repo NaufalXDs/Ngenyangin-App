@@ -37,6 +37,8 @@ export const updateProfile = (data) => apiRequest('/users/me', { method: 'PATCH'
 
 // Admin
 export const getAdminUsers = () => apiRequest('/admin/users');
+export const createUser = (data) => apiRequest('/users', { method: 'POST', body: JSON.stringify(data) });
+export const updateUserAdmin = (id, data) => apiRequest(`/admin/users/${id}`, { method: 'PATCH', body: JSON.stringify(data) });
 export const updateUserRole = (id, role) => apiRequest(`/admin/users/${id}/role`, { method: 'PATCH', body: JSON.stringify({ role }) });
 export const deleteUser = (id) => apiRequest(`/admin/users/${id}`, { method: 'DELETE' });
 export const getAdminRecipes = () => apiRequest('/recipes?status=ALL');

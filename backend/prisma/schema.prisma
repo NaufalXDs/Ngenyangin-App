@@ -20,8 +20,9 @@ enum Status {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid())
   email     String   @unique
+  username  String?
   password  String
   name      String
   role      Role     @default(USER)
@@ -31,17 +32,17 @@ model User {
 }
 
 model Recipe {
-  id           Int      @id @default(autoincrement())
-  title        String
-  description  String   @db.Text
-  ingredients  String   @db.Text
-  instructions String   @db.Text
-  category     String
-  imageUrl     String?
-  status       Status   @default(PENDING)
-  rejectionReason String? @db.Text
-  authorId     Int
-  author       User     @relation(fields: [authorId], references: [id])
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id              Int      @id @default(autoincrement())
+  title           String
+  description     String   @db.Text
+  ingredients     String   @db.Text
+  instructions    String   @db.Text
+  category        String
+  imageUrl        String?
+  status          Status   @default(PENDING)
+  rejectionReason String?  @db.Text
+  authorId        String
+  author          User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }

@@ -4,6 +4,7 @@ import { useAuth } from "../../context/AuthContext.jsx";
 import { loginSchema } from "../../utils/validation.js";
 import { FaArrowRight, FaEye, FaEyeSlash } from "react-icons/fa";
 import OAuthButton from "../../components/auth/OAuthButton.jsx";
+import TurnstileWidget from "../../components/auth/TurnstileWidget.jsx";
 import Button from "../../components/Button.jsx";
 import Form from "../../components/Form.jsx";
 import Alert from "../../components/Alert.jsx";
@@ -11,6 +12,7 @@ import Alert from "../../components/Alert.jsx";
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -31,7 +33,7 @@ export default function Login() {
     setLoading(true);
 
     try {
-      await signIn({ email, password });
+      await signIn({ email, password, turnstileToken });
       navigate("/");
     } catch (err) {
       setError(err.message);
@@ -60,7 +62,7 @@ export default function Login() {
         </Link>
       </div>
 
-      <div className="my-auto flex w-full max-w-xl flex-col items-center justify-center lg:w-[42%] xl:w-[40%]">
+      <div className="my-auto flex w-full max-w-xl flex-col items-center justify-center lg:w-[42%] xl:w-[40%]" >
         <div className="w-full max-w-md rounded-xl bg-white p-5 sm:p-8">
           <h2 className="mb-6 text-center text-[28px] text-[#31281F] sm:text-[35px] font-black">
             Login
@@ -102,6 +104,9 @@ export default function Login() {
                 </button>
               }
             />
+
+            <TurnstileWidget onVerify={(token) => setTurnstileToken(token)} />
+
             <Button
               type="submit"
               variant="primary"

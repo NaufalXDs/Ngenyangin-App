@@ -8,19 +8,23 @@ export class UsersService {
 
   async findAll() {
     return this.prisma.user.findMany({
-      select: { id: true, name: true, email: true, role: true, createdAt: true },
+      select: { id: true, username: true, name: true, email: true, role: true, createdAt: true },
     });
   }
 
-  async createUser(dto: { name: string; email: string; password: string; role?: string }) {
+  async createUser(dto: { name: string; username?: string; email: string; password: string; role?: string }) {
     if (!dto.name || !dto.email || !dto.password) {
       throw new BadRequestException('Name, email, and password are required');
     }
     const emailClean = dto.email.trim().toLowerCase();
-    const existing = await this.prisma.user.findUnique({ where: { email: emailClean } });
-    if (existing) {
+    const existingEmail = await this.prisma.user.findUnique({ where: { email: emailClean } });
+    if (existingEmail) {
       throw new ConflictException('Email is already registered');
     }
+
+    const usernameClean = dto.username && dto.username.trim()
+      ? dto.username.trim()
+      : dto.name.trim();
 
     const hashedPassword = await bcrypt.hash(dto.password, 10);
     const role = dto.role && ['USER', 'REVIEWER', 'ADMIN'].includes(dto.role) ? dto.role : 'USER';
@@ -28,6 +32,7 @@ export class UsersService {
     const user = await this.prisma.user.create({
       data: {
         name: dto.name.trim(),
+        username: usernameClean,
         email: emailClean,
         password: hashedPassword,
         role: role as any,
@@ -36,11 +41,11 @@ export class UsersService {
 
     return {
       message: 'User created successfully',
-      user: { id: user.id, name: user.name, email: user.email, role: user.role },
+      user: { id: user.id, username: user.username, name: user.name, email: user.email, role: user.role },
     };
   }
 
-  async updateProfile(userId: number, dto: { name?: string; email?: string; currentPassword?: string; newPassword?: string }) {
+  async updateProfile(userId: string, dto: { name?: string; username?: string; email?: string; currentPassword?: string; newPassword?: string }) {
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!user) {
       throw new NotFoundException('User not found');
@@ -50,6 +55,10 @@ export class UsersService {
 
     if (dto.name && dto.name.trim()) {
       data.name = dto.name.trim();
+    }
+
+    if (dto.username !== undefined) {
+      data.username = dto.username.trim() || (dto.name ? dto.name.trim() : user.name);
     }
 
     if (dto.email && dto.email.trim()) {
@@ -75,24 +84,23 @@ export class UsersService {
     }
 
     if (Object.keys(data).length === 0) {
-      return { id: user.id, name: user.name, email: user.email, role: user.role };
+      return { id: user.id, username: user.username, name: user.name, email: user.email, role: user.role };
     }
 
     const updated = await this.prisma.user.update({
       where: { id: userId },
       data,
-      select: { id: true, name: true, email: true, role: true },
+      select: { id: true, username: true, name: true, email: true, role: true },
     });
 
     return updated;
   }
 
-  async updateRole(idStr: string, role: string) {
+  async updateRole(id: string, role: string) {
     if (!['USER', 'REVIEWER', 'ADMIN'].includes(role)) {
       throw new BadRequestException('Invalid role specified');
     }
 
-    const id = Number(idStr);
     const user = await this.prisma.user.findUnique({ where: { id } });
     if (!user) {
       throw new NotFoundException('User not found');
@@ -101,14 +109,13 @@ export class UsersService {
     const updated = await this.prisma.user.update({
       where: { id },
       data: { role: role as any },
-      select: { id: true, name: true, email: true, role: true },
+      select: { id: true, username: true, name: true, email: true, role: true },
     });
 
     return { message: 'User role updated successfully', user: updated };
   }
 
-  async remove(idStr: string) {
-    const id = Number(idStr);
+  async remove(id: string) {
     const user = await this.prisma.user.findUnique({ where: { id } });
     if (!user) {
       throw new NotFoundException('User not found');

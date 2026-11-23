@@ -7,7 +7,15 @@ import {
 import Alert from "../../components/Alert.jsx";
 import Modal from "../../components/Modal.jsx";
 import Button from "../../components/Button.jsx";
-import { FaUsers, FaMagnifyingGlass, FaTrashCan } from "react-icons/fa6";
+import UserCreateDrawer from "../../components/UserCreateDrawer.jsx";
+import UserEditDrawer from "../../components/UserEditDrawer.jsx";
+import {
+  FaUsers,
+  FaMagnifyingGlass,
+  FaTrashCan,
+  FaUserPlus,
+  FaUserPen,
+} from "react-icons/fa6";
 
 export default function UserManagement() {
   const [users, setUsers] = useState([]);
@@ -18,6 +26,9 @@ export default function UserManagement() {
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
+  const [isCreateDrawerOpen, setIsCreateDrawerOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [isEditDrawerOpen, setIsEditDrawerOpen] = useState(false);
 
   useEffect(() => {
     fetchUsers();
@@ -64,46 +75,63 @@ export default function UserManagement() {
     const q = searchQuery.toLowerCase();
     return (
       (u.name && u.name.toLowerCase().includes(q)) ||
+      (u.username && u.username.toLowerCase().includes(q)) ||
       (u.email && u.email.toLowerCase().includes(q))
     );
   });
 
   return (
     <>
-      {error && (
-        <Alert type="error" message={error} onClose={() => setError("")} />
-      )}
-      {success && (
-        <Alert
-          type="success"
-          message={success}
-          onClose={() => setSuccess("")}
-        />
-      )}
-
+      <div className="my-6">
+        {error && (
+          <Alert type="error" message={error} onClose={() => setError("")} />
+        )}
+        {success && (
+          <Alert
+            type="success"
+            message={success}
+            onClose={() => setSuccess("")}
+          />
+        )}
+      </div>
       <div className="space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
-              <FaUsers className="text-primary" /> User Management
-            </h2>
-            <p className="text-sm text-muted-foreground mt-1">
-              Manage user roles and access permissions across the platform.
-            </p>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="p-3 bg-primary text-primary-foreground rounded-xl shadow-xs">
+              <FaUsers size={24} />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-foreground">
+                User Management
+              </h1>
+              <p className="text-sm text-muted-foreground">
+                Manage user roles and access permissions across the platform.
+              </p>
+            </div>
           </div>
+          <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+            <div className="relative w-full sm:w-72">
+              <FaMagnifyingGlass
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                size={14}
+              />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search users by name, username or email..."
+                className="w-full rounded-[10px] border border-border bg-card pl-9 pr-4 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary shadow-xs"
+              />
+            </div>
 
-          <div className="relative w-full sm:w-72">
-            <FaMagnifyingGlass
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-              size={14}
-            />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search users by name or email..."
-              className="w-full rounded-[10px] border border-border bg-card pl-9 pr-4 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary shadow-xs"
-            />
+            <Button
+              variant="primary"
+              size="md"
+              onClick={() => setIsCreateDrawerOpen(true)}
+              className="w-full sm:w-auto shrink-0"
+            >
+              <FaUserPlus className="mr-1.5" /> Add New User
+            </Button>
           </div>
         </div>
 
@@ -135,7 +163,7 @@ export default function UserManagement() {
                     </tr>
                   ) : (
                     filteredUsers.map((u) => {
-                      const initial = (u.name || u.email || "U")
+                      const initial = (u.name || u.username || u.email || "U")
                         .charAt(0)
                         .toUpperCase();
                       return (
@@ -152,8 +180,14 @@ export default function UserManagement() {
                                 <p className="font-semibold text-foreground truncate">
                                   {u.name || "Unnamed"}
                                 </p>
+                                <p className="text-xs text-primary font-medium truncate">
+                                  @{u.username || "username"}
+                                </p>
                                 <p className="text-xs text-muted-foreground truncate">
                                   {u.email}
+                                </p>
+                                <p className="text-[11px] font-mono text-muted-foreground/80 truncate mt-0.5">
+                                  ID: {u.id}
                                 </p>
                               </div>
                             </div>
@@ -164,7 +198,7 @@ export default function UserManagement() {
                               onChange={(e) =>
                                 handleRoleChange(u.id, e.target.value)
                               }
-                              className={`border border-border rounded-lg px-2.5 py-1.5 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary shadow-xs`}
+                              className={`border border-border rounded-lg px-2.5 py-1.5 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary shadow-xs ${u.role === "ADMIN" ? "bg-purple-50 text-destructive border-purple-200" : ""}`}
                             >
                               <option value="USER">USER</option>
                               <option value="REVIEWER">REVIEWER</option>
@@ -178,7 +212,19 @@ export default function UserManagement() {
                               year: "numeric",
                             })}
                           </td>
-                          <td className="px-6 py-4 text-right">
+                          <td className="px-6 py-4 text-right space-x-2">
+                            <Button
+                              variant="outline"
+                              size="md"
+                              onClick={() => {
+                                setSelectedUser(u);
+                                setIsEditDrawerOpen(true);
+                              }}
+                              className="inline-flex items-center gap-1.5 text-sm"
+                            >
+                              <FaUserPen size={14} />
+                              <span>Edit</span>
+                            </Button>
                             <Button
                               variant="destructive"
                               size="md"
@@ -227,6 +273,19 @@ export default function UserManagement() {
           undone.
         </p>
       </Modal>
+
+      <UserCreateDrawer
+        isOpen={isCreateDrawerOpen}
+        onClose={() => setIsCreateDrawerOpen(false)}
+        onSuccess={fetchUsers}
+      />
+
+      <UserEditDrawer
+        isOpen={isEditDrawerOpen}
+        onClose={() => setIsEditDrawerOpen(false)}
+        onSuccess={fetchUsers}
+        user={selectedUser}
+      />
     </>
   );
 }

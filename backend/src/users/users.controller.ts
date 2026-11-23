@@ -17,14 +17,14 @@ export class UsersController {
 
   @Roles('ADMIN')
   @Post()
-  async createUser(@Body() body: { name: string; email: string; password: string; role?: string }) {
+  async createUser(@Body() body: { name: string; username?: string; email: string; password: string; role?: string }) {
     return this.usersService.createUser(body);
   }
 
   @Roles('USER', 'REVIEWER', 'ADMIN')
   @Patch('me')
-  async updateProfile(@Body() body: { name?: string; email?: string; currentPassword?: string; newPassword?: string }, @Req() req: any) {
-    return this.usersService.updateProfile(Number(req.user.id), body);
+  async updateProfile(@Body() body: { name?: string; username?: string; email?: string; currentPassword?: string; newPassword?: string }, @Req() req: any) {
+    return this.usersService.updateProfile(req.user.id, body);
   }
 
   @Roles('ADMIN')

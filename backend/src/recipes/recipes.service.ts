@@ -27,17 +27,17 @@ export class RecipesService {
     return this.prisma.recipe.findMany({
       where,
       include: {
-        author: { select: { id: true, name: true, email: true } },
+        author: { select: { id: true, username: true, name: true, email: true } },
       },
       orderBy: { createdAt: 'desc' },
     });
   }
 
-  async findMine(userId: number) {
+  async findMine(userId: string) {
     return this.prisma.recipe.findMany({
       where: { authorId: userId },
       include: {
-        author: { select: { id: true, name: true, email: true } },
+        author: { select: { id: true, username: true, name: true, email: true } },
       },
       orderBy: { createdAt: 'desc' },
     });
@@ -56,12 +56,12 @@ export class RecipesService {
         description: dto.description?.trim() || '',
         ingredients: dto.ingredients.trim(),
         instructions: dto.instructions.trim(),
-        category: dto.category?.trim() || 'Makanan Utama',
+        category: dto.category?.trim() || 'Main Course',
         status,
-        authorId: Number(user.id),
+        authorId: user.id,
       },
       include: {
-        author: { select: { id: true, name: true, email: true } },
+        author: { select: { id: true, username: true, name: true, email: true } },
       },
     });
   }
@@ -71,8 +71,8 @@ export class RecipesService {
       throw new ForbiddenException('Only admin and reviewers can moderate recipes');
     }
 
-    if (!['APPROVED', 'REJECTED'].includes(status)) {
-      throw new BadRequestException('Invalid moderation status. Must be APPROVED or REJECTED');
+    if (!['APPROVED', 'PENDING', 'REJECTED'].includes(status)) {
+      throw new BadRequestException('Invalid moderation status. Must be APPROVED, PENDING, or REJECTED');
     }
 
     if (status === 'REJECTED' && (!rejectionReason || !rejectionReason.trim())) {
@@ -91,7 +91,7 @@ export class RecipesService {
         status: status as any,
         rejectionReason: status === 'REJECTED' && rejectionReason ? rejectionReason.trim() : null,
       },
-      include: { author: { select: { id: true, name: true, email: true } } },
+      include: { author: { select: { id: true, username: true, name: true, email: true } } },
     });
   }
 
@@ -102,7 +102,7 @@ export class RecipesService {
       throw new NotFoundException('Recipe not found');
     }
 
-    if (recipe.authorId !== Number(user.id) && user.role !== 'ADMIN') {
+    if (recipe.authorId !== user.id && user.role !== 'ADMIN') {
       throw new ForbiddenException('You can only delete your own recipes unless you are admin');
     }
 

@@ -1,29 +1,31 @@
 import { z } from 'zod';
 
 export const loginSchema = z.object({
-  email: z.string().email('Format email tidak valid'),
-  password: z.string().min(8, 'Password minimal 8 karakter'),
+  email: z.string().min(1, 'Email or username is required'),
+  password: z.string().min(8, 'Password must be at least 8 characters'),
 });
 
 export const registerSchema = z.object({
-  name: z.string().min(2, 'Nama minimal 2 karakter'),
-  email: z.string().email('Format email tidak valid'),
-  password: z.string().min(8, 'Password minimal 8 karakter'),
+  name: z.string().min(2, 'Name must be at least 2 characters'),
+  username: z.string().min(3, 'Username must be at least 3 characters').regex(/^[a-zA-Z0-9_]+$/, 'Username can only contain letters, numbers, and underscores'),
+  email: z.string().email('Invalid email address format'),
+  password: z.string().min(8, 'Password must be at least 8 characters'),
 });
 
 export const profileSchema = z.object({
-  name: z.string().min(2, 'Nama minimal 2 karakter'),
-  email: z.string().email('Format email tidak valid'),
+  name: z.string().min(3, 'Username must be at least 3 characters').regex(/^[a-zA-Z0-9_]+$/, 'Username can only contain letters, numbers, and underscores'),
+  username: z.string().min(2, 'Name must be at least 2 characters'),
+  email: z.string().email('Invalid email address format'),
   currentPassword: z.string().optional(),
   newPassword: z.string().optional(),
   confirmPassword: z.string().optional(),
 }).refine(
   (data) => !data.newPassword || data.newPassword.length >= 8,
-  { message: 'Password baru minimal 8 karakter', path: ['newPassword'] }
+  { message: 'New password must be at least 8 characters', path: ['newPassword'] }
 ).refine(
   (data) => !data.newPassword || data.currentPassword,
-  { message: 'Password saat ini wajib diisi untuk mengubah password', path: ['currentPassword'] }
+  { message: 'Current password is required to change password', path: ['currentPassword'] }
 ).refine(
   (data) => !data.newPassword || data.newPassword === data.confirmPassword,
-  { message: 'Konfirmasi password tidak cocok', path: ['confirmPassword'] }
+  { message: 'Passwords do not match', path: ['confirmPassword'] }
 );

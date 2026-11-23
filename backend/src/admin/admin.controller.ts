@@ -15,6 +15,15 @@ export class AdminController {
     return this.adminService.findAllUsers(req.user);
   }
 
+  @Patch('users/:id')
+  async updateUser(
+    @Param('id') id: string,
+    @Body() body: { name?: string; username?: string; email?: string; role?: string },
+    @Req() req: any
+  ) {
+    return this.adminService.updateUser(id, body, req.user);
+  }
+
   @Patch('users/:id/role')
   async updateUserRole(@Param('id') id: string, @Body() body: { role: string }, @Req() req: any) {
     return this.adminService.updateUserRole(id, body.role, req.user);
