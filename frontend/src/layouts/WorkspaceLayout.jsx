@@ -8,6 +8,7 @@ import {
   FaClipboardList,
   FaUsers,
   FaBookBookmark,
+  FaUserGear,
 } from "react-icons/fa6";
 
 export default function WorkspaceLayout({ children }) {
@@ -24,7 +25,7 @@ export default function WorkspaceLayout({ children }) {
       label: "Summary",
       path: "/workspace/summary",
       icon: <FaChartPie className="mr-1.5" />,
-      show: false, // Hidden per user request
+      show: false,
     },
     {
       id: "mine",
@@ -53,6 +54,13 @@ export default function WorkspaceLayout({ children }) {
       path: "/workspace/users",
       icon: <FaUsers className="mr-1.5" />,
       show: isAdmin,
+    },
+    {
+      id: "account",
+      label: "Account",
+      path: "/account",
+      icon: <FaUserGear className="mr-1.5" />,
+      show: true,
     },
   ];
 

@@ -2,11 +2,7 @@ import { useState } from "react";
 import { Outlet, Link, useNavigate } from "react-router-dom";
 import Footer from "../components/Footer.jsx";
 import Navbar from "../components/Navbar.jsx";
-import {
-  FaUserGear,
-  FaChartPie,
-  FaDoorOpen,
-} from "react-icons/fa6";
+import { FaUserGear, FaChartPie, FaDoorOpen } from "react-icons/fa6";
 import { useAuth } from "../context/AuthContext.jsx";
 import Button from "../components/Button.jsx";
 import { IoIosArrowBack } from "react-icons/io";
@@ -60,28 +56,30 @@ export default function AppLayout() {
             <div
               aria-hidden={!isDropdownOpen}
               inert={!isDropdownOpen}
-              className={`absolute right-0 z-[100] top-12 w-56 origin-top-right rounded-2xl border border-gray-200 bg-white py-2 shadow-xl transition-all duration-150 ease-out ${isDropdownOpen ? "translate-y-0 scale-100 opacity-100" : "pointer-events-none -translate-y-1 scale-95 opacity-0"}`}
+              className={`absolute right-0 z-100 top-12 w-56 origin-top-right rounded-2xl border border-gray-200 bg-white py-2 shadow-xl transition-all duration-150 ease-out ${isDropdownOpen ? "translate-y-0 scale-100 opacity-100" : "pointer-events-none -translate-y-1 scale-95 opacity-0"}`}
             >
               <div className="truncate border-b border-gray-100 px-4 py-2 text-sm font-medium text-gray-700">
-                <h2>{username}</h2>
+                <div className="flex flex-row gap-5">
+                  <h2>{username} </h2>
+                  <span className="inline-block mt-1 px-2 bg-amber-100 text-amber-900 rounded text-[10px] font-bold uppercase">
+                    {user.role}
+                  </span>
+                </div>
                 <h3 className="text-muted-foreground text-xs">{email}</h3>
-                <span className="inline-block mt-1 px-2 py-0.5 bg-amber-100 text-amber-900 rounded text-[10px] font-bold uppercase">
-                  {user.role}
-                </span>
               </div>
               <hr className="border-gray-200" />
               <Link
-                to="/profile"
+                to="/account"
                 onClick={() => setIsDropdownOpen(false)}
                 className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-xl font-semibold"
               >
                 <FaUserGear aria-hidden="true" />
-                <span>Edit Profile</span>
+                <span>Account</span>
               </Link>
               <Link
                 to="/workspace/summary"
                 onClick={() => setIsDropdownOpen(false)}
-                className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-xl font-semibold text-primary"
+                className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100 rounded-xl font-semibold text-primary"
               >
                 <FaChartPie />
                 <span>Workspace</span>

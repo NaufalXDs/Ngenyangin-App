@@ -9,7 +9,7 @@ import MyRecipes from './pages/workspace/MyRecipes.jsx';
 import RecipeReview from './pages/workspace/RecipeReview.jsx';
 import UserManagement from './pages/workspace/UserManagement.jsx';
 import RecipeManagement from './pages/workspace/RecipeManagement.jsx';
-import Profile from './pages/Profile.jsx';
+import Account from './pages/Account.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import AppLayout from './layouts/AppLayout.jsx';
 import AuthLayout from './layouts/AuthLayout.jsx';
@@ -88,10 +88,10 @@ export default function App() {
             </Route>
 
             <Route
-              path="/profile"
+              path="/account"
               element={
                 <ProtectedRoute>
-                  <Profile />
+                  <Account />
                 </ProtectedRoute>
               }
             />

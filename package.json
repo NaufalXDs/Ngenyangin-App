@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev:backend": "npm --prefix backend run start:dev",
-    "dev:frontend": "npm --prefix frontend run dev",
+    "dev:frontend": "npm --prefix frontend run dev --host",
     "build:backend": "npm --prefix backend run build",
     "build:frontend": "npm --prefix frontend run build"
   },
