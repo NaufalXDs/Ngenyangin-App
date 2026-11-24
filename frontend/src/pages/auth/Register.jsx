@@ -33,9 +33,15 @@ export default function Register() {
       return;
     }
 
-    const validationResult = registerSchema.safeParse({ name, username, email, password });
+    const validationResult = registerSchema.safeParse({
+      name,
+      username,
+      email,
+      password,
+    });
     if (!validationResult.success) {
-      const issues = validationResult.error?.errors || validationResult.error?.issues || [];
+      const issues =
+        validationResult.error?.errors || validationResult.error?.issues || [];
       setError(issues[0]?.message || "Validation failed");
       return;
     }
@@ -144,7 +150,11 @@ export default function Register() {
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword((visible) => !visible)}
-                  aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
+                  aria-label={
+                    showConfirmPassword
+                      ? "Hide confirm password"
+                      : "Show confirm password"
+                  }
                   className="text-gray-500 hover:text-gray-700 p-1"
                 >
                   {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
@@ -152,7 +162,9 @@ export default function Register() {
               }
             />
 
-            <TurnstileWidget onVerify={(token) => setTurnstileToken(token)} />
+            <div className="w-full flex justify-start">
+              <TurnstileWidget onVerify={(token) => setTurnstileToken(token)} />
+            </div>
 
             <Button
               type="submit"

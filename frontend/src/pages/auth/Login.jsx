@@ -62,7 +62,7 @@ export default function Login() {
         </Link>
       </div>
 
-      <div className="my-auto flex w-full max-w-xl flex-col items-center justify-center lg:w-[42%] xl:w-[40%]" >
+      <div className="my-auto flex w-full max-w-xl flex-col items-center justify-center lg:w-[42%] xl:w-[40%]">
         <div className="w-full max-w-md rounded-xl bg-white p-5 sm:p-8">
           <h2 className="mb-6 text-center text-[28px] text-[#31281F] sm:text-[35px] font-black">
             Login
@@ -105,7 +105,9 @@ export default function Login() {
               }
             />
 
-            <TurnstileWidget onVerify={(token) => setTurnstileToken(token)} />
+            <div className="flex justify-start w-full">
+              <TurnstileWidget onVerify={(token) => setTurnstileToken(token)} />
+            </div>
 
             <Button
               type="submit"

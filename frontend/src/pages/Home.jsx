@@ -1,160 +1,123 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
+import { getRecipes } from "../services/api.js";
 import Button from "../components/Button.jsx";
 import Card from "../components/Card.jsx";
 import RecipeCard from "../components/RecipeCard.jsx";
-import Modal from "../components/Modal.jsx";
-import Form from "../components/Form.jsx";
 import Alert from "../components/Alert.jsx";
-import { FaBookOpen, FaBell } from "react-icons/fa6";
+import { FaBookOpen, FaPlus, FaUtensils } from "react-icons/fa6";
+import bannerImg from "../assets/banner.jpeg";
 
 export default function Home() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [recipes, setRecipes] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  // State for testing interactive reusable components
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [alertMessage, setAlertMessage] = useState(
-    "Selamat datang di Ngenyangin Web App!",
-  );
-  const [testInput, setTestInput] = useState("");
+  useEffect(() => {
+    fetchApprovedRecipes();
+  }, []);
 
-  const sampleRecipe = {
-    title: "Nasi Goreng Spesial Nusantara",
-    slug: "nasi-goreng-spesial-nusantara",
-    imageUrl: "/banner.png",
-    cookingTime: 25,
-    author: { name: "Chef Admin" },
-    status: "APPROVED",
+  const fetchApprovedRecipes = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const data = await getRecipes();
+      setRecipes(data);
+    } catch (err) {
+      setError(err.message || "Failed to load public recipes");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="flex flex-1 flex-col bg-orange-50/50">
-      <main className="max-w-5xl mx-auto px-6 py-12 space-y-10">
-        {/* Hero Section */}
-        <div className="text-center">
-          <h2 className="text-4xl sm:text-5xl font-bold text-[#31281F] mb-4">
-            Temukan & Bagikan Resep Makanan Favoritmu
-          </h2>
-          <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
-            Platform berbagi resep kuliner nusantara dan internasional dengan
-            kurasi reviewer terpercaya.
+    <div className="flex flex-1 flex-col bg-background min-h-screen">
+      {/* Hero Section with Banner & Dark Overlay */}
+      <div
+        className="relative w-full py-24 sm:py-32 bg-cover bg-center flex items-center justify-center text-center px-4"
+        style={{ backgroundImage: `url(${bannerImg})` }}
+      >
+        <div className="absolute inset-0 bg-black/55 backdrop-blur-[1px]" />
+        
+        <div className="relative z-10 max-w-3xl mx-auto space-y-6 text-white">
+          <h1 className="text-4xl sm:text-6xl font-black tracking-tight drop-shadow-md">
+            Discover & Share Delicious Recipes
+          </h1>
+          <p className="text-base sm:text-lg text-gray-200 font-medium max-w-xl mx-auto drop-shadow-sm">
+            Explore authentic culinary creations from our community, carefully curated and approved by expert reviewers.
           </p>
-
-          <div className="flex flex-wrap items-center justify-center gap-4">
+          <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
             <Button
               variant="primary"
-              className="hover:bg-primary"
               size="lg"
-              onClick={() => navigate("/recipes")}
+              onClick={() => {
+                const gallery = document.getElementById("recipe-gallery");
+                gallery?.scrollIntoView({ behavior: "smooth" });
+              }}
+              className="inline-flex items-center gap-2"
             >
-              <span className="inline-flex items-center gap-2">
-                <FaBookOpen /> Jelajahi Resep
-              </span>
+              <FaBookOpen /> Explore Recipes
             </Button>
-
-            <Button
-              variant="outline"
-              size="lg"
-              onClick={() => setIsModalOpen(true)}
-            >
-              <span className="inline-flex items-center gap-2">
-                <FaBell /> Test Modal & Alert
-              </span>
-            </Button>
-          </div>
-        </div>
-
-        {/* Alert Test */}
-        {alertMessage && (
-          <Alert
-            type="success"
-            message={alertMessage}
-            onClose={() => setAlertMessage("")}
-          />
-        )}
-
-        {/* Grid Section for Reusable Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-          {/* General Card Component Test */}
-          <Card
-            title="Tentang Ngenyangin"
-            subtitle="Platform Resep Modern"
-            headerAction={<FaBookOpen className="text-orange-500" size={20} />}
-            footer={
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={() => setAlertMessage("Tombol dalam Card diklik!")}
-              >
-                Klik Aksi
-              </Button>
-            }
-          >
-            <p className="text-sm text-gray-600 mb-4">
-              Lorem ipsum dolor, sit amet consectetur adipisicing elit. Esse hic
-              eos aut nemo at possimus consequatur fuga dolorum officia.
-              Quibusdam optio debitis corporis molestiae.
-            </p>
-            <Form
-              label="Test Form di dalam Card"
-              id="test-input"
-              value={testInput}
-              onChange={(e) => setTestInput(e.target.value)}
-              placeholder="Ketik sesuatu..."
-            />
-          </Card>
-
-          {/* RecipeCard Component Test */}
-          <div>
-            <h3 className="text-xl font-bold text-[#31281F] mb-4">
-              Contoh RecipeCard
-            </h3>
-            <RecipeCard recipe={sampleRecipe} />
-          </div>
-        </div>
-
-        {/* Modal Component Test */}
-        <Modal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          title="Modal Test Interaktif"
-          footer={
-            <>
+            {user ? (
               <Button
                 variant="outline"
-                size="sm"
-                onClick={() => setIsModalOpen(false)}
+                size="lg"
+                onClick={() => navigate("/workspace/my-recipes")}
+                className="inline-flex items-center gap-2 bg-white/10 text-white border-white/30 hover:bg-white/20"
               >
-                Tutup
+                <FaPlus /> Publish Recipe
               </Button>
+            ) : (
               <Button
-                variant="primary"
-                size="sm"
-                onClick={() => {
-                  setAlertMessage("Aksi modal berhasil dijalankan!");
-                  setIsModalOpen(false);
-                }}
+                variant="outline"
+                size="lg"
+                onClick={() => navigate("/auth/login")}
+                className="inline-flex items-center gap-2 bg-white/10 text-white border-white/30 hover:bg-white/20"
               >
-                Simpan Perubahan
+                Sign In to Publish
               </Button>
-            </>
-          }
-        >
-          <div className="space-y-4">
-            <p className="text-sm text-gray-600">
-              Ini adalah contoh penggunaan komponen <strong>Modal.jsx</strong>{" "}
-              yang reusable. Anda dapat menampilkan form, konfirmasi, atau
-              detail data di sini.
-            </p>
-            <Form
-              label="Nama Masukkan"
-              id="modal-input"
-              placeholder="Masukkan data..."
-            />
+            )}
           </div>
-        </Modal>
+        </div>
+      </div>
+
+      {/* Main Content / Recipe Gallery */}
+      <main id="recipe-gallery" className="max-w-7xl mx-auto px-6 py-16 space-y-8 w-full">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-border pb-4">
+          <div>
+            <h2 className="text-2xl sm:text-3xl font-bold text-foreground flex items-center gap-3">
+              <FaUtensils className="text-primary" /> Approved Recipe Catalog
+            </h2>
+            <p className="text-sm text-muted-foreground mt-1">
+              Browse all published and verified recipes from our talented culinary creators.
+            </p>
+          </div>
+          <span className="text-xs font-semibold px-3 py-1 bg-primary/10 text-primary rounded-full self-start md:self-auto">
+            {recipes.length} Recipes Available
+          </span>
+        </div>
+
+        {error && <Alert type="error" message={error} onClose={() => setError("")} />}
+
+        {loading ? (
+          <p className="text-muted-foreground py-20 text-center text-base">
+            Loading public recipes...
+          </p>
+        ) : recipes.length === 0 ? (
+          <div className="bg-card rounded-[10px] border border-border p-16 text-center space-y-3 shadow-xs">
+            <p className="text-lg font-bold text-foreground">No approved recipes found yet.</p>
+            <p className="text-sm text-muted-foreground">Be the first creator to publish and share your favorite recipe!</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {recipes.map((recipe) => (
+              <RecipeCard key={recipe.id} recipe={recipe} />
+            ))}
+          </div>
+        )}
       </main>
     </div>
   );

@@ -79,7 +79,7 @@ export class RecipesService {
       throw new BadRequestException('Rejection reason is required when rejecting a recipe');
     }
 
-    const id = Number(idStr);
+    const id = idStr;
     const recipe = await this.prisma.recipe.findUnique({ where: { id } });
     if (!recipe) {
       throw new NotFoundException('Recipe not found');
@@ -96,7 +96,7 @@ export class RecipesService {
   }
 
   async remove(idStr: string, user: any) {
-    const id = Number(idStr);
+    const id = idStr;
     const recipe = await this.prisma.recipe.findUnique({ where: { id } });
     if (!recipe) {
       throw new NotFoundException('Recipe not found');

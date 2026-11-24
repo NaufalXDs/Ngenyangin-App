@@ -28,6 +28,9 @@ export async function apiRequest(endpoint, options = {}) {
   return data;
 }
 
+// Public Recipes
+export const getRecipes = () => apiRequest('/recipes');
+
 // Workspace
 export const getMyRecipes = () => apiRequest('/recipes/mine');
 export const moderateRecipe = (id, data) => apiRequest(`/recipes/${id}/moderate`, { method: 'PATCH', body: JSON.stringify(data) });

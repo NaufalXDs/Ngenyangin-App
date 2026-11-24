@@ -6,6 +6,7 @@ import { FaUserGear, FaChartPie, FaDoorOpen } from "react-icons/fa6";
 import { useAuth } from "../context/AuthContext.jsx";
 import Button from "../components/Button.jsx";
 import { IoIosArrowBack } from "react-icons/io";
+import { FaSearch } from "react-icons/fa";
 
 export default function AppLayout() {
   const { user, signOut } = useAuth();
@@ -21,11 +22,12 @@ export default function AppLayout() {
   };
 
   const searchBar = (
-    <div className="relative w-full">
+    <div className="flex flex-row w-full h-full justify-between items-center border border-gray-300 px-4 py-2 gap-2 rounded-xl ">
+      <FaSearch size={20} className="text-muted-foreground" />
       <input
-        type="text"
-        placeholder="Search food recipes..."
-        className="w-full rounded-[10px] border border-gray-300 px-4 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary shadow-xs"
+        type="search"
+        placeholder="Cari resep, bahan, atau minuman..."
+        className="text-muted-foreground w-full h-full text-sm placeholder:text-muted-foreground shadow-xs outline-0"
       />
     </div>
   );
