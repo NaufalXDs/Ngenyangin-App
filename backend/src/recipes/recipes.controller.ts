@@ -33,6 +33,12 @@ export class RecipesController {
     return this.recipesService.findMine(req.user.id);
   }
 
+  @SkipThrottle()
+  @Get(':slug')
+  async findBySlug(@Param('slug') slug: string) {
+    return this.recipesService.findBySlug(slug);
+  }
+
   @UseGuards(JwtAuthGuard)
   @Post()
   async create(@Body() body: { title: string; description: string; ingredients: string; instructions: string }, @Req() req: any) {

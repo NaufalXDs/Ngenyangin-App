@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext.jsx';
 import Home from './pages/Home.jsx';
+import RecipeDetail from './pages/RecipeDetail.jsx';
 import Login from './pages/auth/Login.jsx';
 import Register from './pages/auth/Register.jsx';
 import Summary from './pages/workspace/Summary.jsx';
@@ -29,6 +30,7 @@ export default function App() {
           {/* App Layout */}
           <Route element={<AppLayout />}>
             <Route path="/" element={<Home />} />
+            <Route path="/recipes/:slug" element={<RecipeDetail />} />
             
             <Route
               path="/workspace"

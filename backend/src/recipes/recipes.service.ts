@@ -49,10 +49,13 @@ export class RecipesService {
     }
 
     const status = user.role === 'ADMIN' || user.role === 'REVIEWER' ? 'APPROVED' : 'PENDING';
+    const baseSlug = dto.title.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+    const slug = `${baseSlug || 'recipe'}-${Math.random().toString(36).substring(2, 7)}`;
 
     return this.prisma.recipe.create({
       data: {
         title: dto.title.trim(),
+        slug,
         description: dto.description?.trim() || '',
         ingredients: dto.ingredients.trim(),
         instructions: dto.instructions.trim(),
@@ -64,6 +67,21 @@ export class RecipesService {
         author: { select: { id: true, username: true, name: true, email: true } },
       },
     });
+  }
+
+  async findBySlug(slug: string) {
+    const recipe = await this.prisma.recipe.findUnique({
+      where: { slug },
+      include: {
+        author: { select: { id: true, username: true, name: true, email: true } },
+      },
+    });
+
+    if (!recipe) {
+      throw new NotFoundException('Recipe not found');
+    }
+
+    return recipe;
   }
 
   async moderate(idStr: string, status: string, rejectionReason: string | undefined, user: any) {

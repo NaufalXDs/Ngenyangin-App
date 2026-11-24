@@ -1,7 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { FaClock, FaUser } from "react-icons/fa6";
+import { FaBookOpen, FaClock, FaUser } from "react-icons/fa6";
 import Card from "./Card.jsx";
+import Button from "./Button.jsx";
 
 export default function RecipeCard({ recipe }) {
   const { title, slug, imageUrl, cookingTime, author, status } = recipe;
@@ -14,7 +15,7 @@ export default function RecipeCard({ recipe }) {
 
   return (
     <Card className="group overflow-hidden transition hover:-translate-y-1">
-      <Link to={`/recipes/${slug}`} className="block relative h-48 overflow-hidden bg-gray-100 -mx-6 -mt-6 mb-4">
+      <div className="block relative h-48 overflow-hidden bg-gray-100 -mx-6 -mt-6 mb-4">
         <img
           src={imageUrl || "/banner.png"}
           alt={title}
@@ -29,8 +30,8 @@ export default function RecipeCard({ recipe }) {
             {status}
           </span>
         )}
-      </Link>
-      
+      </div>
+
       <div>
         <Link to={`/recipes/${slug}`}>
           <h4 className="text-lg font-bold text-[#31281F] line-clamp-1 hover:text-orange-600 transition">
@@ -38,6 +39,10 @@ export default function RecipeCard({ recipe }) {
           </h4>
         </Link>
       </div>
+
+      <span className="text-muted-foreground text-sm">
+        {recipe.description}
+      </span>
 
       <div className="mt-4 flex items-center justify-between text-xs text-gray-500 pt-3 border-t border-gray-100">
         <span className="flex items-center gap-1.5 truncate">
@@ -50,6 +55,10 @@ export default function RecipeCard({ recipe }) {
             {cookingTime} mins
           </span>
         )}
+        <Button to={`/recipes/${slug}`} size="md" variant="outline" className="gap-2">
+          <FaBookOpen size={24}/>
+          <span>See The Recipe</span>
+        </Button>
       </div>
     </Card>
   );

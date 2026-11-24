@@ -30,6 +30,7 @@ export async function apiRequest(endpoint, options = {}) {
 
 // Public Recipes
 export const getRecipes = () => apiRequest('/recipes');
+export const getRecipeBySlug = (slug) => apiRequest(`/recipes/${slug}`);
 
 // Workspace
 export const getMyRecipes = () => apiRequest('/recipes/mine');
