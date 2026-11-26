@@ -79,11 +79,7 @@ export default function WorkspaceLayout({ children }) {
                   to={tab.path}
                   variant={isActive ? "primary" : "outline"}
                   size="md"
-                  className={
-                    isActive
-                      ? "shadow-md scale-[1.02]"
-                      : "text-gray-700 bg-white"
-                  }
+                  className={isActive ? "shadow-md scale-[1.02]" : " bg-white"}
                 >
                   {tab.icon}
                   <span>{tab.label}</span>
