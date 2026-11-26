@@ -15,6 +15,8 @@ import {
   FaTrashCan,
   FaUserPlus,
   FaUserPen,
+  FaChevronLeft,
+  FaChevronRight,
 } from "react-icons/fa6";
 
 export default function UserManagement() {
@@ -71,6 +73,9 @@ export default function UserManagement() {
     }
   };
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 5;
+
   const filteredUsers = users.filter((u) => {
     const q = searchQuery.toLowerCase();
     return (
@@ -79,6 +84,10 @@ export default function UserManagement() {
       (u.email && u.email.toLowerCase().includes(q))
     );
   });
+
+  const totalPages = Math.ceil(filteredUsers.length / ITEMS_PER_PAGE) || 1;
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const paginatedUsers = filteredUsers.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
   return (
     <>
@@ -118,7 +127,10 @@ export default function UserManagement() {
               <input
                 type="text"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setCurrentPage(1);
+                }}
                 placeholder="Search users by name, username or email..."
                 className="w-full rounded-[10px] border border-border bg-card pl-9 pr-4 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary shadow-xs"
               />
@@ -162,7 +174,7 @@ export default function UserManagement() {
                       </td>
                     </tr>
                   ) : (
-                    filteredUsers.map((u) => {
+                    paginatedUsers.map((u) => {
                       const initial = (u.name || u.username || u.email || "U")
                         .charAt(0)
                         .toUpperCase();
@@ -245,6 +257,60 @@ export default function UserManagement() {
                 </tbody>
               </table>
             </div>
+
+            {/* Pagination Controls */}
+            {filteredUsers.length > 0 && (
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 border-t border-border bg-card">
+                <span className="text-xs sm:text-sm text-muted-foreground">
+                  Showing <strong className="text-foreground">{startIndex + 1}</strong> to{" "}
+                  <strong className="text-foreground">
+                    {Math.min(startIndex + ITEMS_PER_PAGE, filteredUsers.length)}
+                  </strong>{" "}
+                  of <strong className="text-foreground">{filteredUsers.length}</strong> users
+                </span>
+
+                <div className="flex items-center gap-1.5">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={currentPage === 1}
+                    onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                    className="gap-1 px-2.5"
+                  >
+                    <FaChevronLeft size={12} />
+                    <span>Prev</span>
+                  </Button>
+
+                  <div className="flex items-center gap-1 px-1">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                      <button
+                        key={page}
+                        type="button"
+                        onClick={() => setCurrentPage(page)}
+                        className={`w-8 h-8 rounded-[8px] text-xs font-semibold transition cursor-pointer ${
+                          currentPage === page
+                            ? "bg-primary text-primary-foreground shadow-xs"
+                            : "text-muted-foreground hover:bg-muted"
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    ))}
+                  </div>
+
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={currentPage === totalPages}
+                    onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+                    className="gap-1 px-2.5"
+                  >
+                    <span>Next</span>
+                    <FaChevronRight size={12} />
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

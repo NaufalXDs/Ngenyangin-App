@@ -3,12 +3,15 @@ import Button from "../../components/Button.jsx";
 import { getAdminRecipes, adminDeleteRecipe, moderateRecipe } from "../../services/api.js";
 import Alert from "../../components/Alert.jsx";
 import Modal from "../../components/Modal.jsx";
+import Form from "../../components/Form.jsx";
 import RecipeDetailDrawer from "../../components/RecipeDetailDrawer.jsx";
 import {
   FaBookBookmark,
   FaMagnifyingGlass,
   FaTrashCan,
   FaEye,
+  FaChevronLeft,
+  FaChevronRight,
 } from "react-icons/fa6";
 
 export default function RecipeManagement() {
@@ -21,6 +24,8 @@ export default function RecipeManagement() {
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedRecipeId, setSelectedRecipeId] = useState(null);
+  const [confirmRecipeIdInput, setConfirmRecipeIdInput] = useState("");
+  const [deleteError, setDeleteError] = useState("");
   const [selectedRecipe, setSelectedRecipe] = useState(null);
   const [isDetailDrawerOpen, setIsDetailDrawerOpen] = useState(false);
 
@@ -57,15 +62,20 @@ export default function RecipeManagement() {
   };
 
   const handleDeleteRecipe = async () => {
+    if (confirmRecipeIdInput.trim() !== selectedRecipeId) {
+      setDeleteError("Recipe ID does not match. Please type the exact recipe ID.");
+      return;
+    }
     try {
-      setError("");
+      setDeleteError("");
       await adminDeleteRecipe(selectedRecipeId);
       setSuccess("Recipe deleted successfully");
       setIsDeleteModalOpen(false);
       setSelectedRecipeId(null);
+      setConfirmRecipeIdInput("");
       fetchRecipes();
     } catch (err) {
-      setError(err.message || "Failed to delete recipe");
+      setDeleteError(err.message || "Failed to delete recipe");
     }
   };
 
@@ -75,6 +85,9 @@ export default function RecipeManagement() {
     PENDING: recipes.filter((r) => r.status === "PENDING").length,
     REJECTED: recipes.filter((r) => r.status === "REJECTED").length,
   };
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 5;
 
   const filteredRecipes = recipes.filter((recipe) => {
     const q = searchQuery.toLowerCase();
@@ -88,6 +101,10 @@ export default function RecipeManagement() {
 
     return matchesSearch && matchesStatus;
   });
+
+  const totalPages = Math.ceil(filteredRecipes.length / ITEMS_PER_PAGE) || 1;
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const paginatedRecipes = filteredRecipes.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
   return (
     <>
@@ -128,7 +145,10 @@ export default function RecipeManagement() {
             <input
               type="text"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setCurrentPage(1);
+              }}
               placeholder="Search recipes by title or author..."
               className="w-full rounded-[10px] border border-border bg-card pl-9 pr-4 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary shadow-xs"
             />
@@ -147,7 +167,10 @@ export default function RecipeManagement() {
             return (
               <button
                 key={pill.key}
-                onClick={() => setStatusFilter(pill.key)}
+                onClick={() => {
+                  setStatusFilter(pill.key);
+                  setCurrentPage(1);
+                }}
                 className={`px-3.5 py-1.5 rounded-[10px] text-xs font-semibold transition border cursor-pointer ${
                   isActive
                     ? "bg-primary text-primary-foreground border-primary shadow-xs"
@@ -188,7 +211,7 @@ export default function RecipeManagement() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
-                  {filteredRecipes.map((recipe) => (
+                  {paginatedRecipes.map((recipe) => (
                     <tr
                       key={recipe.id}
                       className="hover:bg-muted/35 transition-colors"
@@ -273,6 +296,60 @@ export default function RecipeManagement() {
                 </tbody>
               </table>
             </div>
+
+            {/* Pagination Controls */}
+            {filteredRecipes.length > 0 && (
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 border-t border-border bg-card">
+                <span className="text-xs sm:text-sm text-muted-foreground">
+                  Showing <strong className="text-foreground">{startIndex + 1}</strong> to{" "}
+                  <strong className="text-foreground">
+                    {Math.min(startIndex + ITEMS_PER_PAGE, filteredRecipes.length)}
+                  </strong>{" "}
+                  of <strong className="text-foreground">{filteredRecipes.length}</strong> recipes
+                </span>
+
+                <div className="flex items-center gap-1.5">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={currentPage === 1}
+                    onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                    className="gap-1 px-2.5"
+                  >
+                    <FaChevronLeft size={12} />
+                    <span>Prev</span>
+                  </Button>
+
+                  <div className="flex items-center gap-1 px-1">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                      <button
+                        key={page}
+                        type="button"
+                        onClick={() => setCurrentPage(page)}
+                        className={`w-8 h-8 rounded-[8px] text-xs font-semibold transition cursor-pointer ${
+                          currentPage === page
+                            ? "bg-primary text-primary-foreground shadow-xs"
+                            : "text-muted-foreground hover:bg-muted"
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    ))}
+                  </div>
+
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={currentPage === totalPages}
+                    onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+                    className="gap-1 px-2.5"
+                  >
+                    <span>Next</span>
+                    <FaChevronRight size={12} />
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -280,7 +357,7 @@ export default function RecipeManagement() {
       <Modal
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
-        title="Delete Recipe"
+        title="Confirm Recipe Deletion"
         footer={
           <>
             <Button
@@ -295,15 +372,27 @@ export default function RecipeManagement() {
               size="md"
               onClick={handleDeleteRecipe}
             >
-              Delete Recipe
+              Confirm Delete
             </Button>
           </>
         }
       >
-        <p className="text-sm text-foreground/85">
-          Are you sure you want to delete this recipe from the system? This
-          action cannot be undone.
-        </p>
+        <div className="space-y-4">
+          <p className="text-sm text-foreground/85">
+            This action is permanent and cannot be undone. To confirm, please type the exact Recipe ID below:
+          </p>
+          <div className="p-3 bg-muted rounded-[8px] font-mono text-xs font-bold text-foreground select-all break-all">
+            {selectedRecipeId}
+          </div>
+          <Form
+            label="Type Recipe ID to Confirm"
+            id="confirm-recipe-id-mgmt"
+            value={confirmRecipeIdInput}
+            onChange={(e) => setConfirmRecipeIdInput(e.target.value)}
+            placeholder="Paste or type recipe ID here..."
+          />
+          {deleteError && <p className="text-xs font-semibold text-red-600">{deleteError}</p>}
+        </div>
       </Modal>
 
       <RecipeDetailDrawer
