@@ -10,6 +10,7 @@ async function bootstrap() {
   ) ?? ['http://localhost:5173', 'http://127.0.0.1:5173'];
 
   app.enableCors({ origin: allowedOrigins });
+  app.setGlobalPrefix('api/v1');
   const config = new DocumentBuilder()
     .setTitle('Ngenyangin API')
     .setDescription('backend')

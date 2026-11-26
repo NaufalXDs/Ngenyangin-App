@@ -27,7 +27,7 @@ export class RecipesService {
     return this.prisma.recipe.findMany({
       where,
       include: {
-        author: { select: { id: true, username: true, name: true, email: true } },
+        author: { select: { id: true, username: true, name: true } },
       },
       orderBy: { createdAt: 'desc' },
     });
@@ -37,7 +37,7 @@ export class RecipesService {
     return this.prisma.recipe.findMany({
       where: { authorId: userId },
       include: {
-        author: { select: { id: true, username: true, name: true, email: true } },
+        author: { select: { id: true, username: true, name: true } },
       },
       orderBy: { createdAt: 'desc' },
     });
@@ -64,7 +64,7 @@ export class RecipesService {
         authorId: user.id,
       },
       include: {
-        author: { select: { id: true, username: true, name: true, email: true } },
+        author: { select: { id: true, username: true, name: true } },
       },
     });
   }
@@ -73,7 +73,7 @@ export class RecipesService {
     const recipe = await this.prisma.recipe.findUnique({
       where: { slug },
       include: {
-        author: { select: { id: true, username: true, name: true, email: true } },
+        author: { select: { id: true, username: true, name: true } },
       },
     });
 
@@ -109,7 +109,7 @@ export class RecipesService {
         status: status as any,
         rejectionReason: status === 'REJECTED' && rejectionReason ? rejectionReason.trim() : null,
       },
-      include: { author: { select: { id: true, username: true, name: true, email: true } } },
+      include: { author: { select: { id: true, username: true, name: true } } },
     });
   }
 
