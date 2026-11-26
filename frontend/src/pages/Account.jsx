@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useAuth } from "@/context/AuthContext.jsx";
 import { updateProfile } from "@/services/api.js";
-import { profileSchema } from "@/utils/validation.js";
+import { profileSchema } from "@/lib/validation.js";
 import { Button, Card, Form, Alert } from "@/components";
-import WorkspaceLayout from "../layouts/WorkspaceLayout.jsx";
+import WorkspaceLayout from "@/layouts/WorkspaceLayout.jsx";
 import { FaUserGear, FaCamera } from "react-icons/fa6";
 
 export default function Account() {

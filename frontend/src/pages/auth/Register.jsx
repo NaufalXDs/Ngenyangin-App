@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { FaArrowRight, FaEye, FaEyeSlash } from "react-icons/fa";
 import { useAuth } from "@/context/AuthContext.jsx";
-import { registerSchema } from "@/utils/validation.js";
+import { registerSchema } from "@/lib/validation.js";
 import { OAuthButton, TurnstileWidget, Button, Form, Alert } from "@/components";
 
 export default function Register() {
@@ -58,7 +58,7 @@ export default function Register() {
     <div className="flex flex-1 flex-col items-center justify-between w-full px-3 py-4 lg:px-0">
       <div
         id="menu-sign"
-        className="mx-auto flex w-full max-w-md items-center justify-center gap-2 overflow-x-hidden"
+        className="mx-auto flex w-full max-w-md items-center justify-center gap-2 overflow-x-hidden p-2"
       >
         <Link
           to="/auth/login"
@@ -158,7 +158,7 @@ export default function Register() {
               }
             />
 
-            <div className="w-full flex justify-start">
+            <div className="w-full flex justify-center">
               <TurnstileWidget onVerify={(token) => setTurnstileToken(token)} />
             </div>
 

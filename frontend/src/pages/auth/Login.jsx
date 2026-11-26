@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext.jsx";
-import { loginSchema } from "@/utils/validation.js";
+import { loginSchema } from "@/lib/validation.js";
 import { OAuthButton, TurnstileWidget, Button, Form, Alert } from "@/components";
+import { FaArrowRight, FaEye, FaEyeSlash } from "react-icons/fa";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -41,7 +42,7 @@ export default function Login() {
     <div className="flex flex-1 flex-col items-center justify-between w-full px-3 py-4 lg:px-0">
       <div
         id="menu-sign"
-        className="mx-auto flex w-full max-w-md items-center justify-center gap-2 overflow-x-hidden"
+        className="mx-auto flex w-full max-w-md items-center justify-center gap-2 overflow-x-hidden p-2"
       >
         <Link
           to="/auth/login"
@@ -100,7 +101,7 @@ export default function Login() {
               }
             />
 
-            <div className="flex justify-start w-full">
+            <div className="flex justify-center w-full">
               <TurnstileWidget onVerify={(token) => setTurnstileToken(token)} />
             </div>
 
