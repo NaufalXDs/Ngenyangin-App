@@ -2,11 +2,11 @@ import { useState } from "react";
 import { Outlet, Link, useNavigate } from "react-router-dom";
 import Footer from "../components/Footer.jsx";
 import Navbar from "../components/Navbar.jsx";
+import NavbarSearch from "../components/NavbarSearch.jsx";
 import { FaUserGear, FaChartPie, FaDoorOpen } from "react-icons/fa6";
 import { useAuth } from "../context/AuthContext.jsx";
 import Button from "../components/Button.jsx";
 import { IoIosArrowBack } from "react-icons/io";
-import { FaSearch } from "react-icons/fa";
 
 export default function AppLayout() {
   const { user, signOut } = useAuth();
@@ -21,20 +21,9 @@ export default function AppLayout() {
     navigate("/auth/login");
   };
 
-  const searchBar = (
-    <div className="flex flex-row w-full h-full justify-between items-center border border-gray-300 px-4 py-2 gap-2 rounded-xl ">
-      <FaSearch size={20} className="text-muted-foreground" />
-      <input
-        type="search"
-        placeholder="Cari resep, bahan, atau minuman..."
-        className="text-muted-foreground w-full h-full text-sm placeholder:text-muted-foreground shadow-xs outline-0"
-      />
-    </div>
-  );
-
   return (
     <div className="flex min-h-screen flex-col">
-      <Navbar centerContent={searchBar}>
+      <Navbar centerContent={<NavbarSearch />}>
         {user ? (
           <div className="relative flex items-center gap-3">
             <button
