@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { FaBookOpen, FaClock, FaUser } from "react-icons/fa6";
 import Card from "./Card.jsx";
 import Button from "./Button.jsx";
+import noPictureImg from "../assets/nopicture.png";
 
 export default function RecipeCard({ recipe }) {
   const { title, slug, imageUrl, cookingTime, author, status } = recipe;
@@ -17,7 +18,7 @@ export default function RecipeCard({ recipe }) {
     <Card className="group overflow-hidden transition hover:-translate-y-1">
       <div className="block relative h-48 overflow-hidden bg-gray-100 -mx-6 -mt-6 mb-4">
         <img
-          src={imageUrl || "/banner.png"}
+          src={imageUrl ? imageUrl : noPictureImg}
           alt={title}
           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
         />

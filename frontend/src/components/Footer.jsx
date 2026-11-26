@@ -1,12 +1,12 @@
-import IconApp from "../assets/favicon.png"
 import { Link } from "react-router-dom";
+import faviconImg from "../assets/favicon.png";
 
 export default function Footer() {
   return (
     <footer>
       <div className="mx-auto flex w-full flex-col gap-4 px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
         <Link to="/" className="text-lg font-bold">
-          <img src={IconApp} alt="Ngenyangin" className="h-10 w-auto" />
+          <img src={faviconImg} alt="Ngenyangin" className="h-10 w-auto" />
         </Link>
         <div
           aria-label="Navigasi footer"
