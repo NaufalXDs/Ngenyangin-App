@@ -1,28 +1,39 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { getRecipeBySlug } from "../services/api.js";
+import { useAuth } from "../context/AuthContext.jsx";
+import { getRecipeBySlug, moderateRecipe, adminDeleteRecipe } from "../services/api.js";
 import Button from "../components/Button.jsx";
 import Card from "../components/Card.jsx";
 import Alert from "../components/Alert.jsx";
+import Modal from "../components/Modal.jsx";
+import Form from "../components/Form.jsx";
 import {
   FaArrowLeft,
   FaShareNodes,
   FaCheck,
   FaCopy,
   FaUtensils,
-  FaUser,
   FaCalendarDays,
   FaListCheck,
   FaFire,
+  FaShieldHalved,
+  FaTrashCan,
 } from "react-icons/fa6";
 
 export default function RecipeDetail() {
   const { slug } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [recipe, setRecipe] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [copied, setCopied] = useState(false);
+
+  // Admin Delete Modal state with ID confirmation
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [confirmRecipeIdInput, setConfirmRecipeIdInput] = useState("");
+  const [deleteError, setDeleteError] = useState("");
 
   useEffect(() => {
     fetchRecipe();
@@ -38,6 +49,36 @@ export default function RecipeDetail() {
       setError(err.message || "Failed to load recipe");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleStatusChange = async (newStatus) => {
+    try {
+      setError("");
+      setSuccess("");
+      await moderateRecipe(recipe.id, {
+        status: newStatus,
+        rejectionReason: newStatus === "REJECTED" ? "Rejected by administrator" : undefined,
+      });
+      setSuccess(`Recipe status successfully updated to ${newStatus}`);
+      fetchRecipe();
+    } catch (err) {
+      setError(err.message || "Failed to update recipe status");
+    }
+  };
+
+  const handleDeleteRecipe = async () => {
+    if (confirmRecipeIdInput.trim() !== recipe.id) {
+      setDeleteError("Recipe ID does not match. Please type the exact recipe ID to confirm.");
+      return;
+    }
+    try {
+      setDeleteError("");
+      await adminDeleteRecipe(recipe.id);
+      setIsDeleteModalOpen(false);
+      navigate("/");
+    } catch (err) {
+      setDeleteError(err.message || "Failed to delete recipe");
     }
   };
 
@@ -91,7 +132,6 @@ export default function RecipeDetail() {
     );
   }
 
-  // Format ingredients and instructions into clean arrays
   const ingredientsList = recipe.ingredients
     ? recipe.ingredients.split("\n").filter((item) => item.trim().length > 0)
     : [];
@@ -100,9 +140,14 @@ export default function RecipeDetail() {
     ? recipe.instructions.split("\n").filter((step) => step.trim().length > 0)
     : [];
 
+  const isAdmin = user && user.role === "ADMIN";
+
   return (
     <div className="flex-1 bg-background py-10 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-8">
+        {success && <Alert type="success" message={success} onClose={() => setSuccess("")} />}
+        {error && <Alert type="error" message={error} onClose={() => setError("")} />}
+
         {/* Navigation Breadcrumb / Back button */}
         <div className="flex items-center justify-between">
           <Link
@@ -111,20 +156,34 @@ export default function RecipeDetail() {
           >
             <FaArrowLeft /> Back to Recipes
           </Link>
-          <span className="text-xs font-semibold px-3 py-1 bg-primary/10 text-primary rounded-full">
-            {recipe.category || "General"}
-          </span>
+          <div className="flex items-center gap-2">
+            {isAdmin && (
+              <span className="text-xs font-bold px-3 py-1 bg-rose-100 text-rose-800 rounded-full flex items-center gap-1">
+                <FaShieldHalved /> Admin Mode
+              </span>
+            )}
+            <span className="text-xs font-semibold px-3 py-1 bg-primary/10 text-primary rounded-full">
+              {recipe.category || "General"}
+            </span>
+          </div>
         </div>
 
         {/* 2-Column Responsive Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
           {/* Left Column: Recipe Information (7 cols on lg) */}
           <div className="lg:col-span-7 space-y-8">
-            {/* Header info */}
             <div className="space-y-4 border-b border-border pb-6">
               <h1 className="text-3xl sm:text-5xl font-black text-foreground tracking-tight leading-tight">
                 {recipe.title}
               </h1>
+
+              {/* Recipe ID visible ONLY to ADMIN */}
+              {isAdmin && (
+                <div className="inline-flex items-center gap-2 px-3 py-1 bg-muted rounded-md font-mono text-xs text-muted-foreground border border-border">
+                  <span>Recipe ID:</span>
+                  <strong className="text-foreground select-all">{recipe.id}</strong>
+                </div>
+              )}
 
               {recipe.description && (
                 <p className="text-base sm:text-lg text-muted-foreground font-normal leading-relaxed">
@@ -201,7 +260,7 @@ export default function RecipeDetail() {
             </div>
           </div>
 
-          {/* Right Column: Recipe Image & Share Card (5 cols on lg) */}
+          {/* Right Column: Recipe Image, Share Card & Admin Actions (5 cols on lg) */}
           <div className="lg:col-span-5 space-y-6 lg:sticky lg:top-24">
             {/* Recipe Image Card */}
             <div className="overflow-hidden rounded-[14px] border border-border bg-card shadow-sm">
@@ -262,9 +321,91 @@ export default function RecipeDetail() {
                 )}
               </div>
             </Card>
+
+            {/* Admin Quick Actions Card (Visible ONLY to ADMIN) */}
+            {isAdmin && (
+              <Card
+                title="Admin Actions"
+                subtitle="Manage recipe status and system moderation"
+                headerAction={<FaShieldHalved className="text-rose-600" size={20} />}
+                className="border-rose-200 bg-rose-50/30"
+              >
+                <div className="space-y-4 pt-2">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-foreground">Change Status</label>
+                    <select
+                      value={recipe.status}
+                      onChange={(e) => handleStatusChange(e.target.value)}
+                      className="w-full border border-border bg-card rounded-[10px] px-3 py-2 text-sm font-bold uppercase focus:outline-none focus:ring-2 focus:ring-primary shadow-xs cursor-pointer"
+                    >
+                      <option value="APPROVED">APPROVED</option>
+                      <option value="PENDING">PENDING</option>
+                      <option value="REJECTED">REJECTED</option>
+                    </select>
+                  </div>
+
+                  <div className="pt-2 border-t border-border">
+                    <Button
+                      variant="destructive"
+                      size="md"
+                      onClick={() => {
+                        setConfirmRecipeIdInput("");
+                        setDeleteError("");
+                        setIsDeleteModalOpen(true);
+                      }}
+                      className="w-full inline-flex items-center justify-center gap-2"
+                    >
+                      <FaTrashCan /> Delete Recipe
+                    </Button>
+                  </div>
+                </div>
+              </Card>
+            )}
           </div>
         </div>
       </div>
+
+      {/* Admin Delete Confirmation Modal requiring exact Recipe ID */}
+      <Modal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        title="Confirm Recipe Deletion"
+        footer={
+          <>
+            <Button
+              variant="outline"
+              size="md"
+              onClick={() => setIsDeleteModalOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              size="md"
+              onClick={handleDeleteRecipe}
+            >
+              Confirm Delete
+            </Button>
+          </>
+        }
+      >
+        <div className="space-y-4">
+          <p className="text-sm text-foreground/85">
+            This action is permanent and cannot be undone. To confirm, please type the exact Recipe ID below:
+          </p>
+          <div className="p-3 bg-muted rounded-[8px] font-mono text-xs font-bold text-foreground select-all break-all">
+            {recipe.id}
+          </div>
+          <Form
+            label="Type Recipe ID to Confirm"
+            id="confirm-recipe-id"
+            value={confirmRecipeIdInput}
+            onChange={(e) => setConfirmRecipeIdInput(e.target.value)}
+            placeholder="Paste or type recipe ID here..."
+          />
+          {deleteError && <p className="text-xs font-semibold text-red-600">{deleteError}</p>}
+        </div>
+      </Modal>
     </div>
   );
 }

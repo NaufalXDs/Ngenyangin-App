@@ -58,7 +58,6 @@ export default function RecipeCreateDrawer({ isOpen, onClose, onSuccess }) {
       setLoading(false);
       onSuccess?.();
       onClose();
-      // Reset form
       setStep(1);
       setTitle("");
       setCategory("Main Course");
@@ -73,7 +72,6 @@ export default function RecipeCreateDrawer({ isOpen, onClose, onSuccess }) {
 
   return (
     <div className="fixed inset-0 z-50 overflow-hidden">
-      {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/50 backdrop-blur-xs transition-opacity"
         onClick={onClose}
@@ -99,7 +97,6 @@ export default function RecipeCreateDrawer({ isOpen, onClose, onSuccess }) {
             </button>
           </div>
 
-          {/* Progress Bar */}
           <div className="w-full bg-muted h-1.5">
             <div
               className="bg-primary h-1.5 transition-all duration-300"
@@ -107,7 +104,6 @@ export default function RecipeCreateDrawer({ isOpen, onClose, onSuccess }) {
             />
           </div>
 
-          {/* Body Content */}
           <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
             {error && <Alert type="error" message={error} onClose={() => setError("")} />}
 
@@ -228,7 +224,6 @@ export default function RecipeCreateDrawer({ isOpen, onClose, onSuccess }) {
             )}
           </div>
 
-          {/* Footer with Bottom-Right Save Button */}
           <div className="flex items-center justify-between px-6 py-4 border-t border-border bg-muted/40">
             {step > 1 ? (
               <Button variant="outline" size="md" onClick={handlePrev}>
