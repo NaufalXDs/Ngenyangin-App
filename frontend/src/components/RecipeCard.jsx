@@ -15,7 +15,10 @@ export default function RecipeCard({ recipe }) {
   };
 
   return (
-    <Card className="group overflow-hidden transition hover:-translate-y-1">
+    <Card
+      className="group overflow-hidden transition hover:-translate-y-1 h-full flex flex-col"
+      bodyClassName="flex flex-col flex-1"
+    >
       <div className="block relative h-48 overflow-hidden bg-gray-100 -mx-6 -mt-6 mb-4">
         <img
           src={imageUrl ? imageUrl : noPictureImg}
@@ -41,11 +44,11 @@ export default function RecipeCard({ recipe }) {
         </Link>
       </div>
 
-      <span className="text-muted-foreground text-sm">
+      <p className="text-muted-foreground text-sm line-clamp-3 mt-1.5 leading-relaxed">
         {recipe.description}
-      </span>
+      </p>
 
-      <div className="mt-4 flex items-center justify-between text-xs text-gray-500 pt-3 border-t border-gray-100">
+      <div className="mt-auto pt-4 flex items-center justify-between text-xs text-gray-500 border-t border-gray-100">
         <span className="flex items-center gap-1.5 truncate">
           <FaUser className="text-gray-400" />
           <span className="truncate">{author?.name || "Admin"}</span>
@@ -56,8 +59,13 @@ export default function RecipeCard({ recipe }) {
             {cookingTime} mins
           </span>
         )}
-        <Button to={`/recipes/${slug}`} size="md" variant="outline" className="gap-2">
-          <FaBookOpen size={24}/>
+        <Button
+          to={`/recipes/${slug}`}
+          size="md"
+          variant="outline"
+          className="gap-2 shadow-md"
+        >
+          <FaBookOpen />
           <span>See The Recipe</span>
         </Button>
       </div>
