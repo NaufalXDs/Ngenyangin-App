@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Button, Alert, Modal, Form, RecipeDetailDrawer } from "@/components";
+import { Button, Alert, Modal, Form, RecipeDetailDrawer, RecipeEditDrawer } from "@/components";
 import { getAdminRecipes, adminDeleteRecipe, moderateRecipe } from "@/services/api.js";
 import {
   FaBookBookmark,
   FaMagnifyingGlass,
   FaTrashCan,
   FaEye,
+  FaPen,
   FaChevronLeft,
   FaChevronRight,
 } from "react-icons/fa6";
@@ -24,6 +25,8 @@ export default function RecipeManagement() {
   const [deleteError, setDeleteError] = useState("");
   const [selectedRecipe, setSelectedRecipe] = useState(null);
   const [isDetailDrawerOpen, setIsDetailDrawerOpen] = useState(false);
+  const [isEditDrawerOpen, setIsEditDrawerOpen] = useState(false);
+  const [selectedEditRecipe, setSelectedEditRecipe] = useState(null);
 
   useEffect(() => {
     fetchRecipes();
@@ -266,6 +269,18 @@ export default function RecipeManagement() {
                           variant="outline"
                           size="md"
                           onClick={() => {
+                            setSelectedEditRecipe(recipe);
+                            setIsEditDrawerOpen(true);
+                          }}
+                          className="inline-flex items-center gap-1.5 text-sm"
+                        >
+                          <FaPen size={12} />
+                          <span>Edit</span>
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="md"
+                          onClick={() => {
                             setSelectedRecipe(recipe);
                             setIsDetailDrawerOpen(true);
                           }}
@@ -395,6 +410,13 @@ export default function RecipeManagement() {
         isOpen={isDetailDrawerOpen}
         onClose={() => setIsDetailDrawerOpen(false)}
         recipe={selectedRecipe}
+      />
+
+      <RecipeEditDrawer
+        isOpen={isEditDrawerOpen}
+        onClose={() => setIsEditDrawerOpen(false)}
+        onSuccess={fetchRecipes}
+        recipe={selectedEditRecipe}
       />
     </>
   );

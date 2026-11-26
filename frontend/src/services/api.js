@@ -35,6 +35,7 @@ export const getRecipeBySlug = (slug) => apiRequest(`/recipes/${slug}`);
 
 // Workspace
 export const getMyRecipes = () => apiRequest('/recipes/mine');
+export const updateRecipe = (id, data) => apiRequest(`/recipes/${id}`, { method: 'PATCH', body: JSON.stringify(data) });
 export const moderateRecipe = (id, data) => apiRequest(`/recipes/${id}/moderate`, { method: 'PATCH', body: JSON.stringify(data) });
 
 // Profile

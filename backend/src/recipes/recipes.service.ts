@@ -43,7 +43,7 @@ export class RecipesService {
     });
   }
 
-  async create(dto: { title: string; description?: string; ingredients: string; instructions: string; category?: string }, user: any) {
+  async create(dto: { title: string; description?: string; ingredients: string; instructions: string; category?: string; imageUrl?: string }, user: any) {
     if (!dto.title || !dto.ingredients || !dto.instructions) {
       throw new BadRequestException('Title, ingredients, and instructions are required');
     }
@@ -60,6 +60,7 @@ export class RecipesService {
         ingredients: dto.ingredients.trim(),
         instructions: dto.instructions.trim(),
         category: dto.category?.trim() || 'Main Course',
+        imageUrl: dto.imageUrl?.trim() || null,
         status,
         authorId: user.id,
       },
@@ -110,6 +111,61 @@ export class RecipesService {
         rejectionReason: status === 'REJECTED' && rejectionReason ? rejectionReason.trim() : null,
       },
       include: { author: { select: { id: true, username: true, name: true } } },
+    });
+  }
+
+  async update(
+    idStr: string,
+    dto: {
+      title?: string;
+      category?: string;
+      description?: string;
+      imageUrl?: string;
+      ingredients?: string;
+      instructions?: string;
+    },
+    user: any,
+  ) {
+    const id = idStr;
+    const recipe = await this.prisma.recipe.findUnique({ where: { id } });
+    if (!recipe) {
+      throw new NotFoundException('Recipe not found');
+    }
+
+    if (recipe.authorId !== user.id && user.role !== 'ADMIN') {
+      throw new ForbiddenException('You can only edit your own recipes unless you are admin');
+    }
+
+    let slug = recipe.slug;
+    if (dto.title && dto.title.trim() && dto.title.trim() !== recipe.title) {
+      const baseSlug = dto.title.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+      slug = `${baseSlug || 'recipe'}-${Math.random().toString(36).substring(2, 7)}`;
+    }
+
+    // Moderation rule: If regular user edits an APPROVED or REJECTED recipe, reset status to PENDING for review and clear rejection reason
+    let status = recipe.status;
+    let rejectionReason = recipe.rejectionReason;
+    if (user.role !== 'ADMIN' && (recipe.status === 'APPROVED' || recipe.status === 'REJECTED')) {
+      status = 'PENDING' as any;
+      rejectionReason = null;
+    }
+
+    return this.prisma.recipe.update({
+      where: { id },
+      data: {
+        title: dto.title?.trim() ?? recipe.title,
+        slug,
+        category: dto.category?.trim() ?? recipe.category,
+        description: dto.description !== undefined ? dto.description.trim() : recipe.description,
+        imageUrl: dto.imageUrl !== undefined ? (dto.imageUrl.trim() || null) : recipe.imageUrl,
+        ingredients: dto.ingredients?.trim() ?? recipe.ingredients,
+        instructions: dto.instructions?.trim() ?? recipe.instructions,
+        status,
+        rejectionReason,
+      },
+      include: {
+        author: { select: { id: true, username: true, name: true } },
+      },
     });
   }
 

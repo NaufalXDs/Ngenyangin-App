@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Card, RecipeCreateDrawer, RecipeDetailDrawer, Alert } from "@/components";
+import { Button, Card, RecipeCreateDrawer, RecipeEditDrawer, RecipeDetailDrawer, Alert } from "@/components";
 import { getMyRecipes } from "@/services/api.js";
 import {
   FaBookOpenReader,
@@ -9,7 +9,9 @@ import {
   FaListCheck,
   FaMagnifyingGlass,
   FaEye,
+  FaPen,
 } from "react-icons/fa6";
+import noPictureImg from "@/assets/nopicture.png";
 
 export default function MyRecipes() {
   const [recipes, setRecipes] = useState([]);
@@ -17,6 +19,8 @@ export default function MyRecipes() {
   const [error, setError] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [isCreateDrawerOpen, setIsCreateDrawerOpen] = useState(false);
+  const [isEditDrawerOpen, setIsEditDrawerOpen] = useState(false);
+  const [selectedEditRecipe, setSelectedEditRecipe] = useState(null);
   const [selectedRecipe, setSelectedRecipe] = useState(null);
   const [isDetailDrawerOpen, setIsDetailDrawerOpen] = useState(false);
 
@@ -120,6 +124,17 @@ export default function MyRecipes() {
               }
             >
               <div className="space-y-4 pt-1">
+                {/* Recipe Image Banner */}
+                <div className="relative h-44 w-full rounded-lg overflow-hidden bg-muted border border-border shadow-xs flex items-center justify-center shrink-0">
+                  <img
+                    src={recipe.imageUrl || noPictureImg}
+                    alt={recipe.title}
+                    className="w-full h-full object-cover object-center"
+                    onError={(e) => {
+                      e.target.src = noPictureImg;
+                    }}
+                  />
+                </div>
                 <div className="flex items-center justify-between">
                   <span
                     className={`px-2.5 py-1 rounded-[8px] text-[11px] font-bold tracking-wide uppercase ${
@@ -178,7 +193,19 @@ export default function MyRecipes() {
                   </div>
                 )}
 
-                <div className="flex items-center justify-end pt-3 border-t border-border">
+                <div className="flex items-center justify-end gap-2 pt-3 border-t border-border">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setSelectedEditRecipe(recipe);
+                      setIsEditDrawerOpen(true);
+                    }}
+                    className="inline-flex items-center gap-1.5 text-sm"
+                  >
+                    <FaPen size={12} />
+                    <span>Edit</span>
+                  </Button>
                   <Button
                     variant="outline"
                     size="sm"
@@ -202,6 +229,13 @@ export default function MyRecipes() {
         isOpen={isCreateDrawerOpen}
         onClose={() => setIsCreateDrawerOpen(false)}
         onSuccess={fetchMyRecipes}
+      />
+
+      <RecipeEditDrawer
+        isOpen={isEditDrawerOpen}
+        onClose={() => setIsEditDrawerOpen(false)}
+        onSuccess={fetchMyRecipes}
+        recipe={selectedEditRecipe}
       />
 
       <RecipeDetailDrawer

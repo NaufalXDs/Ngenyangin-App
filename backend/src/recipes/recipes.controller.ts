@@ -41,7 +41,7 @@ export class RecipesController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  async create(@Body() body: { title: string; description: string; ingredients: string; instructions: string }, @Req() req: any) {
+  async create(@Body() body: { title: string; description: string; ingredients: string; instructions: string; category?: string; imageUrl?: string }, @Req() req: any) {
     return this.recipesService.create(body, req.user);
   }
 
@@ -50,6 +50,16 @@ export class RecipesController {
   @Patch(':id/moderate')
   async moderate(@Param('id') id: string, @Body() body: { status: string; rejectionReason?: string }, @Req() req: any) {
     return this.recipesService.moderate(id, body.status, body.rejectionReason, req.user);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch(':id')
+  async update(
+    @Param('id') id: string,
+    @Body() body: { title?: string; description?: string; ingredients?: string; instructions?: string; category?: string; imageUrl?: string },
+    @Req() req: any,
+  ) {
+    return this.recipesService.update(id, body, req.user);
   }
 
   @UseGuards(JwtAuthGuard)
