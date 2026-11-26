@@ -40,7 +40,7 @@ export default function AppLayout() {
                 {username}
               </span>
               <IoIosArrowBack
-                className={`transform transition-transform duration-300 ease-in-out ${isDropdownOpen ? "rotate-90" : "-rotate-90"}`}
+                className={`transform transition-transform duration-300 ease-in-out ${isDropdownOpen ? "-rotate-90" : "rotate-0"}`}
               />
             </button>
 
