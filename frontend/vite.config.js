@@ -9,6 +9,11 @@ export default defineConfig({
   server: {
     port: process.env.VITE_PORT ? Number(process.env.VITE_PORT) : 5173,
   },
+  resolve: {
+    alias: {
+      '@': `${import.meta.dirname}/src`,
+    },
+  },
   define: {
     'process.env.BACKEND_URL': JSON.stringify(process.env.BACKEND_URL || process.env.VITE_BACKEND_URL || 'http://127.0.0.1:3000'),
   },

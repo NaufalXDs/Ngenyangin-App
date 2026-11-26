@@ -1,12 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext.jsx";
-import { getRecipeBySlug, moderateRecipe, adminDeleteRecipe } from "../services/api.js";
-import Button from "../components/Button.jsx";
-import Card from "../components/Card.jsx";
-import Alert from "../components/Alert.jsx";
-import Modal from "../components/Modal.jsx";
-import Form from "../components/Form.jsx";
+import { useAuth } from "@/context/AuthContext.jsx";
+import { getRecipeBySlug, moderateRecipe, adminDeleteRecipe } from "@/services/api.js";
+import { Button, Card, Alert, Modal, Form } from "@/components";
 import {
   FaArrowLeft,
   FaShareNodes,

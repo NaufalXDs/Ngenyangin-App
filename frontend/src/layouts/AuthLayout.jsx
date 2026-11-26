@@ -1,6 +1,5 @@
 import { Outlet } from "react-router-dom";
-import Navbar from "../components/Navbar.jsx";
-import Footer from "../components/Footer.jsx";
+import { Navbar, Footer } from "@/components";
 
 export default function AuthLayout() {
   return (

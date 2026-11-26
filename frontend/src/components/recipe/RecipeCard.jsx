@@ -1,9 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { FaBookOpen, FaClock, FaUser } from "react-icons/fa6";
-import Card from "./Card.jsx";
-import Button from "./Button.jsx";
-import noPictureImg from "../assets/nopicture.png";
+import Card from "@/components/ui/Card.jsx";
+import Button from "@/components/ui/Button.jsx";
+import noPictureImg from "@/assets/nopicture.png";
 
 export default function RecipeCard({ recipe }) {
   const { title, slug, imageUrl, cookingTime, author, status } = recipe;

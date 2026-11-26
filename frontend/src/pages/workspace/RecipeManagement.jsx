@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from "react";
-import Button from "../../components/Button.jsx";
-import { getAdminRecipes, adminDeleteRecipe, moderateRecipe } from "../../services/api.js";
-import Alert from "../../components/Alert.jsx";
-import Modal from "../../components/Modal.jsx";
-import Form from "../../components/Form.jsx";
-import RecipeDetailDrawer from "../../components/RecipeDetailDrawer.jsx";
+import { Button, Alert, Modal, Form, RecipeDetailDrawer } from "@/components";
+import { getAdminRecipes, adminDeleteRecipe, moderateRecipe } from "@/services/api.js";
 import {
   FaBookBookmark,
   FaMagnifyingGlass,

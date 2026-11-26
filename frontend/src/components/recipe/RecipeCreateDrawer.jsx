@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import Button from "./Button.jsx";
-import Form from "./Form.jsx";
-import Alert from "./Alert.jsx";
-import { apiRequest } from "../services/api.js";
+import Button from "@/components/ui/Button.jsx";
+import Form from "@/components/ui/Form.jsx";
+import Alert from "@/components/ui/Alert.jsx";
+import { apiRequest } from "@/services/api.js";
 import { FaXmark, FaChevronLeft, FaChevronRight, FaCheck } from "react-icons/fa6";
 
 export default function RecipeCreateDrawer({ isOpen, onClose, onSuccess }) {

@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from "react";
-import Button from "../../components/Button.jsx";
-import Card from "../../components/Card.jsx";
-import { getPendingRecipes, moderateRecipe } from "../../services/api.js";
-import Alert from "../../components/Alert.jsx";
-import Modal from "../../components/Modal.jsx";
-import Form from "../../components/Form.jsx";
+import { Button, Card, Alert, Modal, Form } from "@/components";
+import { getPendingRecipes, moderateRecipe } from "@/services/api.js";
 import {
   FaClipboardList,
   FaCheck,

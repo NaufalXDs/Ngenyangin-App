@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from "react";
-import Button from "../../components/Button.jsx";
-import Card from "../../components/Card.jsx";
-import RecipeCreateDrawer from "../../components/RecipeCreateDrawer.jsx";
-import RecipeDetailDrawer from "../../components/RecipeDetailDrawer.jsx";
-import { getMyRecipes } from "../../services/api.js";
-import Alert from "../../components/Alert.jsx";
+import { Button, Card, RecipeCreateDrawer, RecipeDetailDrawer, Alert } from "@/components";
+import { getMyRecipes } from "@/services/api.js";
 import {
   FaBookOpenReader,
   FaClock,

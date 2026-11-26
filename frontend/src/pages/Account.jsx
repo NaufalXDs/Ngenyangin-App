@@ -1,11 +1,8 @@
 import React, { useState } from "react";
-import { useAuth } from "../context/AuthContext.jsx";
-import { updateProfile } from "../services/api.js";
-import { profileSchema } from "../utils/validation.js";
-import Button from "../components/Button.jsx";
-import Card from "../components/Card.jsx";
-import Form from "../components/Form.jsx";
-import Alert from "../components/Alert.jsx";
+import { useAuth } from "@/context/AuthContext.jsx";
+import { updateProfile } from "@/services/api.js";
+import { profileSchema } from "@/utils/validation.js";
+import { Button, Card, Form, Alert } from "@/components";
 import WorkspaceLayout from "../layouts/WorkspaceLayout.jsx";
 import { FaUserGear, FaCamera } from "react-icons/fa6";
 

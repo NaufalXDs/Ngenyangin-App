@@ -1,14 +1,6 @@
 import React, { useState, useEffect } from "react";
-import {
-  getAdminUsers,
-  updateUserRole,
-  deleteUser,
-} from "../../services/api.js";
-import Alert from "../../components/Alert.jsx";
-import Modal from "../../components/Modal.jsx";
-import Button from "../../components/Button.jsx";
-import UserCreateDrawer from "../../components/UserCreateDrawer.jsx";
-import UserEditDrawer from "../../components/UserEditDrawer.jsx";
+import { getAdminUsers, updateUserRole, deleteUser } from "@/services/api.js";
+import { Alert, Modal, Button, UserCreateDrawer, UserEditDrawer } from "@/components";
 import {
   FaUsers,
   FaMagnifyingGlass,

@@ -11,7 +11,7 @@ import RecipeReview from './pages/workspace/RecipeReview.jsx';
 import UserManagement from './pages/workspace/UserManagement.jsx';
 import RecipeManagement from './pages/workspace/RecipeManagement.jsx';
 import Account from './pages/Account.jsx';
-import ProtectedRoute from './components/ProtectedRoute.jsx';
+import ProtectedRoute from '@/components/auth/ProtectedRoute.jsx';
 import AppLayout from './layouts/AppLayout.jsx';
 import AuthLayout from './layouts/AuthLayout.jsx';
 import WorkspaceLayout from './layouts/WorkspaceLayout.jsx';

@@ -1,13 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext.jsx";
-import { loginSchema } from "../../utils/validation.js";
-import { FaArrowRight, FaEye, FaEyeSlash } from "react-icons/fa";
-import OAuthButton from "../../components/auth/OAuthButton.jsx";
-import TurnstileWidget from "../../components/auth/TurnstileWidget.jsx";
-import Button from "../../components/Button.jsx";
-import Form from "../../components/Form.jsx";
-import Alert from "../../components/Alert.jsx";
+import { useAuth } from "@/context/AuthContext.jsx";
+import { loginSchema } from "@/utils/validation.js";
+import { OAuthButton, TurnstileWidget, Button, Form, Alert } from "@/components";
 
 export default function Login() {
   const [email, setEmail] = useState("");

@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext.jsx";
-import { getRecipes } from "../services/api.js";
-import Button from "../components/Button.jsx";
-import RecipeCard from "../components/RecipeCard.jsx";
-import Alert from "../components/Alert.jsx";
+import { useAuth } from "@/context/AuthContext.jsx";
+import { getRecipes } from "@/services/api.js";
+import { Button, RecipeCard, Alert } from "@/components";
 import {
   FaBookOpen,
   FaPlus,

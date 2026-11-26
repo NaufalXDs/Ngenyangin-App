@@ -6,8 +6,8 @@ import {
   FaUtensils,
   FaClock,
 } from "react-icons/fa6";
-import { getRecipes } from "../services/api.js";
-import noPictureImg from "../assets/nopicture.png";
+import { getRecipes } from "@/services/api.js";
+import noPictureImg from "@/assets/nopicture.png";
 
 export default function NavbarSearch() {
   const navigate = useNavigate();

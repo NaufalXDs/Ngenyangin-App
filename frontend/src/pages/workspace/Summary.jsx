@@ -1,5 +1,5 @@
 import React from "react";
-import Card from "../../components/Card.jsx";
+import { Card } from "@/components";
 import { FaBookBookmark, FaCircleCheck, FaClock, FaCircleXmark, FaChartLine } from "react-icons/fa6";
 
 export default function WorkspaceSummary({ recipes = [] }) {

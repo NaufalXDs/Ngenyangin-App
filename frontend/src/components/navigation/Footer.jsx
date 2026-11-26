@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import faviconImg from "../assets/favicon.png";
+import faviconImg from "@/assets/favicon.png";
 
 export default function Footer() {
   return (

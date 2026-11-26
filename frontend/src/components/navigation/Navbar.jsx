@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import iconApp from "../assets/icons.png";
+import iconApp from "@/assets/icons.png";
 
 export default function Navbar({ variant = "default", centerContent, children, className = "" }) {
   const variants = {

@@ -1,5 +1,5 @@
 import React from "react";
-import Button from "./Button.jsx";
+import Button from "@/components/ui/Button.jsx";
 import { FaXmark, FaClock, FaUtensils, FaListCheck, FaBookOpen } from "react-icons/fa6";
 
 export default function RecipeDetailDrawer({ isOpen, onClose, recipe }) {

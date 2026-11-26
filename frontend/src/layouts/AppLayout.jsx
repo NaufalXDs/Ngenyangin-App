@@ -1,12 +1,10 @@
 import { useState } from "react";
 import { Outlet, Link, useNavigate } from "react-router-dom";
-import Footer from "../components/Footer.jsx";
-import Navbar from "../components/Navbar.jsx";
-import NavbarSearch from "../components/NavbarSearch.jsx";
-import { FaUserGear, FaChartPie, FaDoorOpen } from "react-icons/fa6";
-import { useAuth } from "../context/AuthContext.jsx";
-import Button from "../components/Button.jsx";
+import { Footer, Navbar, NavbarSearch, Button } from "@/components";
+import { useAuth } from "@/context/AuthContext.jsx";
 import { IoIosArrowBack } from "react-icons/io";
+import { FaUserGear } from "react-icons/fa6";
+import { FaChartPie, FaDoorOpen } from "react-icons/fa";
 
 export default function AppLayout() {
   const { user, signOut } = useAuth();

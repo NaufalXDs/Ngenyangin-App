@@ -1,47 +1,45 @@
-import React, { useState, useEffect } from "react";
-import Button from "./Button.jsx";
-import Form from "./Form.jsx";
-import Alert from "./Alert.jsx";
-import { updateUserAdmin } from "../services/api.js";
-import { FaXmark, FaCheck, FaUserPen } from "react-icons/fa6";
+import React, { useState } from "react";
+import Button from "@/components/ui/Button.jsx";
+import Form from "@/components/ui/Form.jsx";
+import Alert from "@/components/ui/Alert.jsx";
+import { createUser } from "@/services/api.js";
+import { FaXmark, FaCheck, FaUserPlus } from "react-icons/fa6";
 
-export default function UserEditDrawer({ isOpen, onClose, onSuccess, user }) {
+export default function UserCreateDrawer({ isOpen, onClose, onSuccess }) {
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [role, setRole] = useState("USER");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (user) {
-      setName(user.name || "");
-      setUsername(user.username || "");
-      setEmail(user.email || "");
-      setRole(user.role || "USER");
-    }
-  }, [user]);
-
-  if (!isOpen || !user) return null;
+  if (!isOpen) return null;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
-    if (!name.trim() || !username.trim() || !email.trim()) {
-      setError("Name, username, and email are required.");
+    if (!name.trim() || !username.trim() || !email.trim() || !password.trim()) {
+      setError("Name, username, email, and password are required.");
       return;
     }
 
     setLoading(true);
 
     try {
-      await updateUserAdmin(user.id, { name, username, email, role });
+      await createUser({ name, username, email, password, role });
       setLoading(false);
       onSuccess?.();
       onClose();
+      // Reset form
+      setName("");
+      setUsername("");
+      setEmail("");
+      setPassword("");
+      setRole("USER");
     } catch (err) {
-      setError(err.message || "Failed to update user");
+      setError(err.message || "Failed to create user");
       setLoading(false);
     }
   };
@@ -59,8 +57,8 @@ export default function UserEditDrawer({ isOpen, onClose, onSuccess, user }) {
           {/* Header */}
           <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-muted/40">
             <div className="flex items-center gap-2">
-              <FaUserPen className="text-primary" size={20} />
-              <h2 className="text-xl font-bold text-foreground">Edit User Account</h2>
+              <FaUserPlus className="text-primary" size={20} />
+              <h2 className="text-xl font-bold text-foreground">Add New User</h2>
             </div>
             <button
               type="button"
@@ -76,13 +74,9 @@ export default function UserEditDrawer({ isOpen, onClose, onSuccess, user }) {
             <div className="p-6 space-y-4">
               {error && <Alert type="error" message={error} onClose={() => setError("")} />}
 
-              <div className="p-3 bg-muted/30 rounded-lg text-xs text-muted-foreground font-mono break-all">
-                User ID: {user.id}
-              </div>
-
               <Form
                 label="Full Name"
-                id="edit-user-name"
+                id="user-name"
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -91,7 +85,7 @@ export default function UserEditDrawer({ isOpen, onClose, onSuccess, user }) {
 
               <Form
                 label="Username"
-                id="edit-user-username"
+                id="user-username"
                 required
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
@@ -100,7 +94,7 @@ export default function UserEditDrawer({ isOpen, onClose, onSuccess, user }) {
 
               <Form
                 label="Email Address"
-                id="edit-user-email"
+                id="user-email"
                 type="email"
                 required
                 value={email}
@@ -108,12 +102,22 @@ export default function UserEditDrawer({ isOpen, onClose, onSuccess, user }) {
                 placeholder="john@example.com"
               />
 
+              <Form
+                label="Password"
+                id="user-password"
+                type="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="At least 6 characters"
+              />
+
               <div className="space-y-1">
-                <label htmlFor="edit-user-role" className="block text-xs font-semibold text-foreground">
+                <label htmlFor="user-role" className="block text-xs font-semibold text-foreground">
                   User Role
                 </label>
                 <select
-                  id="edit-user-role"
+                  id="user-role"
                   value={role}
                   onChange={(e) => setRole(e.target.value)}
                   className="w-full rounded-md border border-input px-3 py-2 text-sm bg-background shadow-xs focus:outline-none focus:ring-2 focus:ring-primary font-semibold"
@@ -131,7 +135,7 @@ export default function UserEditDrawer({ isOpen, onClose, onSuccess, user }) {
                 Cancel
               </Button>
               <Button variant="primary" size="md" loading={loading} type="submit">
-                <FaCheck className="mr-1.5" /> Save Changes
+                <FaCheck className="mr-1.5" /> Save User
               </Button>
             </div>
           </form>

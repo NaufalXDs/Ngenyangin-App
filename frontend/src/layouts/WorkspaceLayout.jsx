@@ -1,7 +1,7 @@
 import React from "react";
 import { useLocation, Outlet } from "react-router-dom";
-import { useAuth } from "../context/AuthContext.jsx";
-import Button from "../components/Button.jsx";
+import { useAuth } from "@/context/AuthContext.jsx";
+import { Button } from "@/components";
 import {
   FaChartPie,
   FaBookOpenReader,

@@ -1,6 +1,6 @@
 import React from "react";
 import { FaApple, FaGoogle } from "react-icons/fa";
-import Button from "../Button";
+import Button from "@/components/ui/Button.jsx";
 
 export default function OAuthButton() {
   return (
