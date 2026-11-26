@@ -1,4 +1,5 @@
-const API_URL = process.env.BACKEND_URL;
+const RAW_API_URL = import.meta.env?.VITE_API_URL || process.env.BACKEND_URL || 'http://localhost:3000';
+const API_URL = RAW_API_URL.endsWith('/api/v1') ? RAW_API_URL : `${RAW_API_URL.replace(/\/+$/, '')}/api/v1`;
 
 export async function apiRequest(endpoint, options = {}) {
   const token = localStorage.getItem('token');
