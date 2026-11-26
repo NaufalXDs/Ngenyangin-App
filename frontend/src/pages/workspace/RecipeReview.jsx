@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Button, Card, Alert, Modal, Form } from "@/components";
+import { Button, Card, Alert, RecipeDetailDrawer } from "@/components";
 import { getPendingRecipes, moderateRecipe } from "@/services/api.js";
 import {
   FaClipboardList,
-  FaCheck,
-  FaXmark,
   FaMagnifyingGlass,
+  FaEye,
+  FaClock,
+  FaUtensils,
+  FaListCheck,
 } from "react-icons/fa6";
+import noPictureImg from "@/assets/nopicture.png";
 
 export default function RecipeReview() {
   const [pendingRecipes, setPendingRecipes] = useState([]);
@@ -15,9 +18,8 @@ export default function RecipeReview() {
   const [success, setSuccess] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
 
-  const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
-  const [selectedRecipeId, setSelectedRecipeId] = useState(null);
-  const [rejectionReason, setRejectionReason] = useState("");
+  const [selectedRecipe, setSelectedRecipe] = useState(null);
+  const [isDetailDrawerOpen, setIsDetailDrawerOpen] = useState(false);
 
   useEffect(() => {
     fetchPendingRecipes();
@@ -36,18 +38,27 @@ export default function RecipeReview() {
     }
   };
 
-  const handleModerate = async (id, status, reason = "") => {
+  const handleApprove = async (id) => {
     try {
       setError("");
-      await moderateRecipe(id, { status, rejectionReason: reason });
-      setSuccess(
-        `Recipe successfully ${status === "APPROVED" ? "approved" : "rejected"}`,
-      );
-      setIsRejectModalOpen(false);
-      setRejectionReason("");
+      await moderateRecipe(id, { status: "APPROVED" });
+      setSuccess("Recipe successfully approved");
       fetchPendingRecipes();
     } catch (err) {
-      setError(err.message || "Failed to moderate recipe");
+      setError(err.message || "Failed to approve recipe");
+      throw err;
+    }
+  };
+
+  const handleReject = async (id, reason) => {
+    try {
+      setError("");
+      await moderateRecipe(id, { status: "REJECTED", rejectionReason: reason });
+      setSuccess("Recipe successfully rejected");
+      fetchPendingRecipes();
+    } catch (err) {
+      setError(err.message || "Failed to reject recipe");
+      throw err;
     }
   };
 
@@ -119,94 +130,109 @@ export default function RecipeReview() {
           </div>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredRecipes.map((recipe) => (
             <Card
               key={recipe.id}
               title={recipe.title}
-              subtitle={`By: ${recipe.author?.name} (${recipe.author?.email})`}
+              subtitle={
+                <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-primary/10 text-primary">
+                  {recipe.category || "Main Course"}
+                </span>
+              }
             >
-              <div className="space-y-3">
-                <p className="text-xs font-semibold text-muted-foreground">
-                  Category: {recipe.category}
-                </p>
-                <div className="bg-muted/40 p-3 rounded-[8px] text-xs text-foreground/80 space-y-1 border border-border">
-                  <p>
-                    <strong>Ingredients:</strong>{" "}
-                    {recipe.ingredients.substring(0, 100)}...
-                  </p>
-                  <p>
-                    <strong>Instructions:</strong>{" "}
-                    {recipe.instructions.substring(0, 100)}...
-                  </p>
-                </div>
-                <div className="flex items-center justify-end gap-2 pt-3 border-t border-border">
-                  <Button
-                    variant="destructive"
-                    size="md"
-                    onClick={() => {
-                      setSelectedRecipeId(recipe.id);
-                      setIsRejectModalOpen(true);
+              <div className="space-y-4 pt-1">
+                {/* Recipe Image Banner */}
+                <div className="relative h-44 w-full rounded-lg overflow-hidden bg-muted border border-border shadow-xs flex items-center justify-center">
+                  <img
+                    src={recipe.imageUrl || noPictureImg}
+                    alt={recipe.title}
+                    className="w-full h-full object-cover object-center"
+                    onError={(e) => {
+                      e.target.src = noPictureImg;
                     }}
-                    className="inline-flex items-center gap-1.5 text-sm"
-                  >
-                    <FaXmark size={14} /> Reject
-                  </Button>
-                  <Button
-                    variant="primary"
-                    size="md"
-                    onClick={() => handleModerate(recipe.id, "APPROVED")}
-                    className="inline-flex items-center gap-1.5 text-sm"
-                  >
-                    <FaCheck size={14} /> Approve
-                  </Button>
+                  />
                 </div>
+
+                {/* Recipe Info */}
+                <div className="flex items-center justify-between">
+                  <span
+                    className={`px-2.5 py-1 rounded-[8px] text-[11px] font-bold tracking-wide uppercase ${
+                      recipe.status === "APPROVED"
+                        ? "bg-emerald-100 text-emerald-800"
+                        : recipe.status === "REJECTED"
+                          ? "bg-rose-100 text-rose-800"
+                          : "bg-amber-100 text-amber-800"
+                    }`}
+                  >
+                    {recipe.status === "APPROVED"
+                      ? "Approved"
+                      : recipe.status === "REJECTED"
+                        ? "Rejected"
+                        : "Pending Review"}
+                  </span>
+                  <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <FaClock size={11} />
+                    {new Date(recipe.createdAt).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })}
+                  </span>
+                </div>
+
+                {recipe.description && (
+                  <p className="text-xs text-foreground/80 line-clamp-2">
+                    {recipe.description}
+                  </p>
+                )}
+
+                <div className="bg-muted/40 p-3 rounded-[8px] text-xs text-foreground/80 space-y-1.5 border border-border/50">
+                  <p className="line-clamp-2">
+                    <strong className="text-foreground flex items-center gap-1">
+                      <FaUtensils size={11} className="text-primary" />{" "}
+                      Ingredients:
+                    </strong>{" "}
+                    {recipe.ingredients}
+                  </p>
+                  <p className="line-clamp-2">
+                    <strong className="text-foreground flex items-center gap-1">
+                      <FaListCheck size={11} className="text-primary" />{" "}
+                      Instructions:
+                    </strong>{" "}
+                    {recipe.instructions}
+                  </p>
+                </div>
+              </div>
+
+              {/* Footer info & View Details button */}
+              <div className="pt-3 border-t border-border flex items-center justify-end mt-auto">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setSelectedRecipe(recipe);
+                    setIsDetailDrawerOpen(true);
+                  }}
+                  className="inline-flex items-center gap-1.5 text-xs"
+                >
+                  <FaEye size={13} />
+                  <span>View Details</span>
+                </Button>
               </div>
             </Card>
           ))}
         </div>
       )}
 
-      <Modal
-        isOpen={isRejectModalOpen}
-        onClose={() => setIsRejectModalOpen(false)}
-        title="Rejection Reason"
-        footer={
-          <>
-            <Button
-              variant="outline"
-              size="md"
-              onClick={() => setIsRejectModalOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="destructive"
-              size="md"
-              onClick={() =>
-                handleModerate(selectedRecipeId, "REJECTED", rejectionReason)
-              }
-            >
-              Submit Rejection
-            </Button>
-          </>
-        }
-      >
-        <div className="space-y-4">
-          <p className="text-xs text-muted-foreground">
-            Provide a rejection reason so the recipe author can improve and
-            resubmit.
-          </p>
-          <Form
-            label="Reason"
-            id="rejection-reason"
-            value={rejectionReason}
-            onChange={(e) => setRejectionReason(e.target.value)}
-            placeholder="Example: Instructions are incomplete..."
-            required
-          />
-        </div>
-      </Modal>
+      <RecipeDetailDrawer
+        isOpen={isDetailDrawerOpen}
+        onClose={() => setIsDetailDrawerOpen(false)}
+        recipe={selectedRecipe}
+        showModeration={true}
+        onApprove={handleApprove}
+        onReject={handleReject}
+      />
     </div>
   );
 }
