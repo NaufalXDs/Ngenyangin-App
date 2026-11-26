@@ -88,7 +88,7 @@ export default function AppLayout() {
               </Link>
               <hr className="border-gray-200 my-1" />
               <Link
-                to="/"
+                to="/auth/login"
                 onClick={handleSignOut}
                 className="flex items-center gap-2 px-4 py-2 text-sm text-red-500 hover:bg-red-50 rounded-xl font-semibold"
               >
