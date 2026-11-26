@@ -25,15 +25,6 @@ export default function RecipeCard({ recipe }) {
           alt={title}
           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
         />
-        {status && (
-          <span
-            className={`absolute top-3 right-3 rounded-full px-3 py-1 text-xs font-semibold ${
-              statusColors[status] || "bg-gray-100 text-gray-800"
-            }`}
-          >
-            {status}
-          </span>
-        )}
       </div>
 
       <div>

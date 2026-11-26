@@ -18,6 +18,7 @@ export { default as TurnstileWidget } from './auth/TurnstileWidget.jsx';
 // Recipe Components
 export { default as RecipeCard } from './recipe/RecipeCard.jsx';
 export { default as RecipeCreateDrawer } from './recipe/RecipeCreateDrawer.jsx';
+export { default as RecipeEditDrawer } from './recipe/RecipeEditDrawer.jsx';
 export { default as RecipeDetailDrawer } from './recipe/RecipeDetailDrawer.jsx';
 
 // User Components

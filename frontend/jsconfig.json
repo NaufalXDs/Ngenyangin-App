@@ -2,9 +2,10 @@
   "compilerOptions": {
     "paths": {
       "@/*": ["./src/*"],
-      "#components/*": ["./src/components/*"],
-      "#lib/*": ["./src/lib/*"],
-      "#hooks/*": ["./src/hooks/*"]
+      "@/layouts/*": ["./src/layouts/*"],
+      "@/components/*": ["./src/components/*"],
+      "@/lib/*": ["./src/lib/*"],
+      "@/hooks/*": ["./src/hooks/*"]
     }
   },
   "include": ["src/**/*"]

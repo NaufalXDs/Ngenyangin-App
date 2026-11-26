@@ -3,13 +3,19 @@ import Button from "@/components/ui/Button.jsx";
 import Form from "@/components/ui/Form.jsx";
 import Alert from "@/components/ui/Alert.jsx";
 import { apiRequest } from "@/services/api.js";
-import { FaXmark, FaChevronLeft, FaChevronRight, FaCheck } from "react-icons/fa6";
+import {
+  FaXmark,
+  FaChevronLeft,
+  FaChevronRight,
+  FaCheck,
+} from "react-icons/fa6";
 
 export default function RecipeCreateDrawer({ isOpen, onClose, onSuccess }) {
   const [step, setStep] = useState(1); // 1: About, 2: Ingredients, 3: Steps, 4: Summary
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("Main Course");
   const [description, setDescription] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
   const [ingredients, setIngredients] = useState("");
   const [instructions, setInstructions] = useState("");
   const [error, setError] = useState("");
@@ -51,6 +57,7 @@ export default function RecipeCreateDrawer({ isOpen, onClose, onSuccess }) {
           title,
           category,
           description,
+          imageUrl: imageUrl.trim() || undefined,
           ingredients,
           instructions,
         }),
@@ -62,6 +69,7 @@ export default function RecipeCreateDrawer({ isOpen, onClose, onSuccess }) {
       setTitle("");
       setCategory("Main Course");
       setDescription("");
+      setImageUrl("");
       setIngredients("");
       setInstructions("");
     } catch (err) {
@@ -79,13 +87,20 @@ export default function RecipeCreateDrawer({ isOpen, onClose, onSuccess }) {
 
       <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
         <div className="w-screen max-w-xl bg-card border-l border-border shadow-2xl flex flex-col transform transition-transform duration-300 ease-in-out">
-          {/* Header */}
           <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-muted/40">
             <div>
-              <h2 className="text-xl font-bold text-foreground">Create New Recipe</h2>
+              <h2 className="text-xl font-bold text-foreground">
+                Create New Recipe
+              </h2>
               <p className="text-xs text-muted-foreground mt-0.5">
                 Step {step} of 4:{" "}
-                {step === 1 ? "About" : step === 2 ? "Ingredients" : step === 3 ? "Steps" : "Summary"}
+                {step === 1
+                  ? "About"
+                  : step === 2
+                    ? "Ingredients"
+                    : step === 3
+                      ? "Steps"
+                      : "Summary"}
               </p>
             </div>
             <button
@@ -105,11 +120,19 @@ export default function RecipeCreateDrawer({ isOpen, onClose, onSuccess }) {
           </div>
 
           <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
-            {error && <Alert type="error" message={error} onClose={() => setError("")} />}
+            {error && (
+              <Alert
+                type="error"
+                message={error}
+                onClose={() => setError("")}
+              />
+            )}
 
             {step === 1 && (
               <div className="space-y-4 animate-fadeIn">
-                <h3 className="text-base font-bold text-foreground">General Information</h3>
+                <h3 className="text-base font-bold text-foreground">
+                  General Information
+                </h3>
                 <Form
                   label="Recipe Title"
                   id="recipe-title"
@@ -118,8 +141,38 @@ export default function RecipeCreateDrawer({ isOpen, onClose, onSuccess }) {
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="e.g. Authentic Nasi Goreng Spesial"
                 />
+                <Form
+                  label="Image URL (Optional)"
+                  id="recipe-image-url"
+                  value={imageUrl}
+                  onChange={(e) => setImageUrl(e.target.value)}
+                  placeholder="https://imgur.com"
+                />
+                {imageUrl.trim() && (
+                  <div className="space-y-1">
+                    <span className="block text-xs font-semibold text-muted-foreground">
+                      Image Preview
+                    </span>
+                    <div className="relative rounded-lg overflow-hidden border border-border h-36 bg-muted flex items-center justify-center">
+                      <img
+                        src={imageUrl}
+                        alt="Preview"
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.style.display = "none";
+                        }}
+                        onLoad={(e) => {
+                          e.target.style.display = "block";
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
                 <div className="space-y-1">
-                  <label htmlFor="recipe-category" className="block text-xs font-semibold text-foreground">
+                  <label
+                    htmlFor="recipe-category"
+                    className="block text-xs font-semibold text-foreground"
+                  >
                     Category
                   </label>
                   <select
@@ -136,7 +189,10 @@ export default function RecipeCreateDrawer({ isOpen, onClose, onSuccess }) {
                   </select>
                 </div>
                 <div className="space-y-1">
-                  <label htmlFor="recipe-desc" className="block text-xs font-semibold text-foreground">
+                  <label
+                    htmlFor="recipe-desc"
+                    className="block text-xs font-semibold text-foreground"
+                  >
                     Short Description
                   </label>
                   <textarea
@@ -153,9 +209,12 @@ export default function RecipeCreateDrawer({ isOpen, onClose, onSuccess }) {
 
             {step === 2 && (
               <div className="space-y-4 animate-fadeIn">
-                <h3 className="text-base font-bold text-foreground">Ingredients Required</h3>
+                <h3 className="text-base font-bold text-foreground">
+                  Ingredients Required
+                </h3>
                 <p className="text-xs text-muted-foreground">
-                  List the ingredients needed, one per line or separated by commas.
+                  List the ingredients needed, one per line or separated by
+                  commas.
                 </p>
                 <div className="space-y-1">
                   <textarea
@@ -172,9 +231,12 @@ export default function RecipeCreateDrawer({ isOpen, onClose, onSuccess }) {
 
             {step === 3 && (
               <div className="space-y-4 animate-fadeIn">
-                <h3 className="text-base font-bold text-foreground">Cooking Steps</h3>
+                <h3 className="text-base font-bold text-foreground">
+                  Cooking Steps
+                </h3>
                 <p className="text-xs text-muted-foreground">
-                  Provide clear instructions on how to prepare and cook this dish.
+                  Provide clear instructions on how to prepare and cook this
+                  dish.
                 </p>
                 <div className="space-y-1">
                   <textarea
@@ -191,33 +253,66 @@ export default function RecipeCreateDrawer({ isOpen, onClose, onSuccess }) {
 
             {step === 4 && (
               <div className="space-y-4 animate-fadeIn">
-                <h3 className="text-base font-bold text-foreground">Recipe Summary</h3>
+                <h3 className="text-base font-bold text-foreground">
+                  Recipe Summary
+                </h3>
                 <p className="text-xs text-muted-foreground">
-                  Review your details before publishing. Once submitted, it will be sent for review.
+                  Review your details before publishing. Once submitted, it will
+                  be sent for review.
                 </p>
 
                 <div className="bg-muted/40 p-4 rounded-xl border border-border space-y-3 text-sm">
                   <div>
-                    <span className="text-xs text-muted-foreground uppercase font-bold">Title</span>
-                    <p className="font-bold text-foreground text-base">{title || "Untitled"}</p>
+                    <span className="text-xs text-muted-foreground uppercase font-bold">
+                      Title
+                    </span>
+                    <p className="font-bold text-foreground text-base">
+                      {title || "Untitled"}
+                    </p>
                   </div>
+                  {imageUrl && (
+                    <div>
+                      <span className="text-xs text-muted-foreground uppercase font-bold">
+                        Image
+                      </span>
+                      <div className="mt-1 h-24 w-36 rounded-lg overflow-hidden border border-border">
+                        <img
+                          src={imageUrl}
+                          alt="Recipe"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    </div>
+                  )}
                   <div>
-                    <span className="text-xs text-muted-foreground uppercase font-bold">Category</span>
+                    <span className="text-xs text-muted-foreground uppercase font-bold">
+                      Category
+                    </span>
                     <p className="text-foreground">{category}</p>
                   </div>
                   {description && (
                     <div>
-                      <span className="text-xs text-muted-foreground uppercase font-bold">Description</span>
+                      <span className="text-xs text-muted-foreground uppercase font-bold">
+                        Description
+                      </span>
                       <p className="text-foreground/80">{description}</p>
                     </div>
                   )}
                   <div>
-                    <span className="text-xs text-muted-foreground uppercase font-bold">Ingredients</span>
-                    <p className="text-foreground/85 whitespace-pre-line font-mono text-xs">{ingredients}</p>
+                    <span className="text-xs text-muted-foreground uppercase font-bold">
+                      Ingredients
+                    </span>
+                    <p className="text-foreground/85 whitespace-pre-line font-mono text-xs">
+                      {ingredients}
+                    </p>
                   </div>
                   <div>
-                    <span className="text-xs text-muted-foreground uppercase font-bold">Instructions</span>
-                    <p className="text-foreground/85 whitespace-pre-line text-xs">{instructions}</p>
+                    <span className="text-xs text-muted-foreground uppercase font-bold">
+                      Instructions
+                    </span>
+                    <p className="text-foreground/85 whitespace-pre-line text-xs">
+                      {instructions}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -238,7 +333,12 @@ export default function RecipeCreateDrawer({ isOpen, onClose, onSuccess }) {
                 Next <FaChevronRight className="ml-1.5" />
               </Button>
             ) : (
-              <Button variant="primary" size="md" loading={loading} onClick={handleSubmit}>
+              <Button
+                variant="primary"
+                size="md"
+                loading={loading}
+                onClick={handleSubmit}
+              >
                 <FaCheck className="mr-1.5" /> Save Recipe
               </Button>
             )}
