@@ -13,8 +13,8 @@ export const registerSchema = z.object({
 });
 
 export const profileSchema = z.object({
-  name: z.string().min(3, 'Username must be at least 3 characters').regex(/^[a-zA-Z0-9_]+$/, 'Username can only contain letters, numbers, and underscores'),
-  username: z.string().min(2, 'Name must be at least 2 characters'),
+  name: z.string().min(2, 'Name must be at least 2 characters'),
+  username: z.string().min(3, 'Username must be at least 3 characters').regex(/^[a-zA-Z0-9_]+$/, 'Username can only contain letters, numbers, and underscores'),
   email: z.string().email('Invalid email address format'),
   currentPassword: z.string().optional(),
   newPassword: z.string().optional(),
